@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block styles %}
+<link href="{% static 'css/registration.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<form class="account-container" method="post">
+    {% csrf_token %}
+    <div class="text-center mb-4">
+        <img class="mb-4" src="{% static 'assets/logo.png' %}" alt="BookKeeper" width="72" height="72">
+        <h1 class="h3 mb-3 font-weight-normal">Bitte melden sie sich an</h1>
+    </div>
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger small" role="alert">
+        {% for error in form.non_field_errors %}
+        <p class="m-0">{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% for field in form.visible_fields %}
+    <div class="form-label-group">
+        {{ field.errors }}
+        {% render_field field class="form-control" placeholder=field.label %}
+        {{ field.label_tag }}
+    </div>
+    {% endfor %}
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Anmelden</button>
+</form>
+{% endblock %}

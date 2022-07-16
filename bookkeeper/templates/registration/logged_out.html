@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+{% block styles %}
+<link href="{% static 'css/registration.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block title %}Erforlgreich Ausgeloggt{% endblock %}
+
+{% block content %}
+<div class="account-container">
+    <div class="text-center mb-4">
+        <img class="mb-4" src="{% static 'assets/logo.png' %}" alt="BookKeeper" width="72" height="72">
+        <h1 class="h3 mb-3 font-weight-normal">Erfolgreich Ausgeloggt</h1>
+    </div>
+    <div class="alert alert-info small" role="alert">
+        <p>Sie haben sich erfolgreich abgemeldet.</p>
+        <p>Sie können sich <a href="{% url 'login' %}">erneut anmelden</a></p>
+    </div>
+</div>
+{% endblock %}
