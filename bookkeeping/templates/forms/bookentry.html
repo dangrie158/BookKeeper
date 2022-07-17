@@ -1,0 +1,81 @@
+{% load widget_tweaks %}
+
+<form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger small" role="alert">
+        <div class="invalid-feedback">
+            {% for error in form.non_field_errors %}
+            <p class="m-0">{{ error }}</p>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% with field=form.amount %}
+    <div class="form-floating mb-3">
+        {% render_field field class="form-control" placeholder='0.00' %}
+        <label for="{{ field.name }}">{{ field.label }}</label>
+    </div>
+    <div class="invalid-feedback">
+        <span>{{ field.errors }}</span>
+    </div>
+    {% endwith %}
+
+    {% with field=form.shop %}
+    <div class="form-floating mb-3">
+        {% render_field field class="form-control" %}
+        <label for="{{ field.name }}">{{ field.label }}</label>
+    </div>
+    <div class="invalid-feedback">
+        <span>{{ field.errors }}</span>
+    </div>
+    {% endwith %}
+
+    {% with field=form.booking_date %}
+    <div class="form-floating mb-3">
+        {% render_field field class="form-control" placeholder=field.label type='date' %}
+        <label for="{{ field.name }}">{{ field.label }}</label>
+    </div>
+    <div class="invalid-feedback">
+        <span>{{ field.errors }}</span>
+    </div>
+    {% endwith %}
+
+    {% with field=form.type %}
+    {{ field.label_tag }}
+    <div class="btn-group mb-3 ms-5" role="group" aria-label="{{ field.label }}">
+        {% for radio in field %}
+        <input type="radio" class="btn-check" name="{{ field.name }}" id="{{ radio.id_for_label }}"
+            value="{{ radio.data.value }}" autocomplete="off">
+        <label class="btn btn-outline-primary" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+        {% endfor %}
+    </div>
+    <div class="invalid-feedback">
+        <span>{{ field.errors }}</span>
+    </div>
+    {% endwith %}
+
+    {% with field=form.receipt %}
+    <div class="mb-3">
+        {% render_field field class="form-control" placeholder=field.label accept='image/*,pdf' capture='environment' %}
+        <label for="{{ field.name }}">{{ field.label }}</label>
+    </div>
+    <div class="invalid-feedback">
+        <span>{{ field.errors }}</span>
+    </div>
+    {% endwith %}
+
+    {% with field=form.comment %}
+    <div class="form-floating mb-3">
+        {% render_field field class="form-control" placeholder=field.label style='height:100px' type='date' %}
+        <label for="{{ field.name }}">{{ field.label }}</label>
+    </div>
+    <div class="invalid-feedback">
+        <span>{{ field.errors }}</span>
+    </div>
+    {% endwith %}
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Speichern</button>
+</form>

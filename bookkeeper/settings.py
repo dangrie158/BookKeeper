@@ -30,6 +30,7 @@ SECRET_KEY = "django-insecure-cp*401trpi9pp(7*rlsl(i7+6@!xal3^+tcxgm5go#wh*!3x&h
 DEBUG = True
 
 ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]"]
+INTERNAL_IPS = ["127.0.0.1"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -70,6 +71,13 @@ TEMPLATES = [
     },
 ]
 
+if DEBUG:
+    INSTALLED_APPS += ["debug_toolbar", "django_browser_reload"]
+    MIDDLEWARE += [
+        "django_browser_reload.middleware.BrowserReloadMiddleware",
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+    ]
+
 WSGI_APPLICATION = "bookkeeper.wsgi.application"
 
 
@@ -103,10 +111,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 AUTH_USER_MODEL = "bookkeeping.User"
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/4.0/topics/i18n/
-
 LANGUAGE_CODE = "de-DE"
 
 TIME_ZONE = "Europe/Berlin"
@@ -120,6 +124,12 @@ STATICFILES_DIRS = ["bookkeeper/static"]
 STATIC_ROOT = "/var/www/bookkeeper/static/"
 
 MEDIA_URL = "media/"
-MEDIA_ROOT = "/var/www/bookkeeper/media/"
+
+if DEBUG:
+    MEDIA_ROOT = "./media_files"
+else:
+    MEDIA_ROOT = "/var/www/bookkeeper/media/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+LOGIN_REDIRECT_URL = "/"
