@@ -29,7 +29,7 @@ SECRET_KEY = "django-insecure-cp*401trpi9pp(7*rlsl(i7+6@!xal3^+tcxgm5go#wh*!3x&h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]"]
+ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]", "192.168.178.45"]
 INTERNAL_IPS = ["127.0.0.1"]
 
 INSTALLED_APPS = [
@@ -66,6 +66,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.media",
+                "bookkeeping.context_processors.years_processor",
             ],
         },
     },
@@ -123,11 +125,13 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = ["bookkeeper/static"]
 STATIC_ROOT = "/var/www/bookkeeper/static/"
 
-MEDIA_URL = "media/"
 
 if DEBUG:
-    MEDIA_ROOT = "./media_files"
+    MEDIA_URL = "./static/"
+    MEDIA_ROOT = "./media_files/"
+    STATICFILES_DIRS += ["./media_files/"]
 else:
+    MEDIA_ROOT = "/media/"
     MEDIA_ROOT = "/var/www/bookkeeper/media/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

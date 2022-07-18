@@ -7,182 +7,43 @@
 
 {% block title %}Buchungen{% endblock %}
 
-{% block content %}
-<a class="btn btn-primary" href="{% url 'entry-add' %}" role="button"><i class="bi bi-plus-circle"></i>
-    Hinzufügen</a>
-<table class="table table-striped">
 
+{% block content %}
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }}" role="alert">
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+<a class="btn btn-primary floating-action-button" href="{% url 'entry-add' %}" role="button">
+    <i class="bi bi-plus"></i>
+</a>
+<table class="table">
     <thead>
-        <tr>
+        <tr >
             <th>Datum</th>
             <th>Shop</th>
-            <th>Betrag</th>
+            <th class="text-end">Betrag</th>
         </tr>
     </thead>
-    <tr>
-        <td>123</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>...</td>
-        <td>...</td>
-        <td>...</td>
-    </tr>
+    {% regroup object_list by booking_month as month_objects %}
+    {% for month in month_objects %}
+        <tr class="table-dark">
+            <th colspan="3" class="text-end">{{ month.grouper | date:'F Y' }}</th>
+        </tr>
+        {% for entry in month.list %}
+        <tr role="button" {% if entry.is_booked_in_future %}class="disabled"{% endif %} onclick="window.location='{% url 'entry-update' entry.id %}'">
+            <td>{{ entry.booking_date | date:'d.F' }}</td>
+            <td class="fw-bolder">{{ entry.shop|truncatechars:20 }}</td>
+            {% if entry.type == 'EX' %}
+            <td class="font-monospace text-danger text-end">-{{ entry.amount }}{{ entry.currency }}</td>
+            {% else %}
+            <td class="font-monospace text-success text-end">{{ entry.amount }}{{ entry.currency }}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    {% endfor %}
+
 </table>
 {% endblock %}

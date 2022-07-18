@@ -1,4 +1,5 @@
 from datetime import date
+from statistics import mode
 from django import forms
 
 from bookkeeping import models
@@ -8,11 +9,16 @@ class EntryForm(forms.ModelForm):
     amount = forms.DecimalField(max_digits=8, decimal_places=2, label="Betrag")
     shop = forms.CharField(max_length=100, label="Shop")
     booking_date = forms.DateField(
-        widget=forms.widgets.DateInput,
+        widget=forms.widgets.DateInput(format="%Y-%m-%d"),
         label="Buchungsdatum",
         initial=date.today().strftime("%Y-%m-%d"),
     )
-    type = forms.ChoiceField(choices=models.BookEntry.EntryType.choices, widget=forms.RadioSelect, label="Typ")
+    type = forms.ChoiceField(
+        choices=models.BookEntry.EntryType.choices,
+        widget=forms.RadioSelect,
+        label="Typ",
+        initial=models.BookEntry.EntryType.EXPENSE,
+    )
     receipt = forms.FileField(label="Beleg", required=False)
     comment = forms.Textarea()
 

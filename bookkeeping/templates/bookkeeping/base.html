@@ -3,14 +3,14 @@
 
 {% block navitems %}
 <ul class="navbar-nav me-auto mb-2 mb-md-0">
-    <li><a href="#" class="nav-link px-2">Übersicht</a></li>
+    <li><a href="/" class="nav-link px-2">Übersicht</a></li>
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-bs-toggle="dropdown"
+        <a class="nav-link dropdown-toggle" href="#" id="yearlyDropdown" data-bs-toggle="dropdown"
             aria-expanded="false">Jahresübersich</a>
-        <ul class="dropdown-menu" aria-labelledby="dropdown01">
-            <li><a class="dropdown-item" href="#">2022</a></li>
-            <li><a class="dropdown-item" href="#">2021</a></li>
-            <li><a class="dropdown-item" href="#">2020</a></li>
+        <ul class="dropdown-menu" aria-labelledby="yearlyDropdown">
+            {% for year in years_with_entries %}
+            <li><a class="dropdown-item" href="/summary/year/{{ year }}/">{{ year }}</a></li>
+            {% endfor %}
         </ul>
     </li>
 </ul>
