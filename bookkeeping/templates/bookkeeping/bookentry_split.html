@@ -1,0 +1,65 @@
+{% extends "bookkeeping/base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Abschreibung bearbeiten{% endblock %}
+
+{% block brand_section %}
+
+<a href="{% if request.GET.num_years is None %}{% url 'entry-update' object.id %}{% else %}{% url 'entry-split' object.id %}{% endif %}" class="text-decoration-none navbar-brand text-primary"><i class="bi bi-chevron-left"></i>Zurück</a>
+{% endblock %}
+
+{% block content %}
+
+<h2 class="text-center">
+    Ausgabe über
+    <span class="font-monospace text-danger text-end">{{ object.amount }}{{ object.currency }}</span>
+    bei {{ object.shop }}
+    <br />
+    <small>über {{ request.GET.num_years|default:'<output id="numYearsOutput">5</output>' }} Jahre abschreiben</small>
+</h2>
+
+{% if request.GET.num_years is None %}
+<form method="get">
+    <label for="numYears" class="form-label">Über wieviele Jahre?</label>
+    <input type="range" class="form-range" name="num_years" value="5" min="2" max="10" id="numYears" oninput="document.getElementById('numYearsOutput').value = this.value">
+
+    <button class="btn btn-primary btn-block col-md-6" type="submit">Weiter</button>
+</form>
+{% else %}
+<form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger small" role="alert">
+        <div class="invalid-feedback d-block">
+            {% for error in form.non_field_errors %}
+            <p class="m-0">{{ error }}</p>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% for field in form %}
+    <div class="form-floating mb-3">
+        {% render_field field class="form-control" placeholder='0.00' %}
+        <label for="{{ field.name }}">{{ field.label }}</label>
+    </div>
+    {% if field.errors %}
+    <div class="invalid-feedback d-block">
+        {% for error in field.errors %}
+        <span>{{ error | escape }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endfor %}
+
+    <div class="container p-4">
+        <div class="row g-2">
+            <button class="btn btn-primary btn-block col-md-6" type="submit" name="save">Speichern</button>
+            <a href="{% url 'entry-update' object.id %}" class="btn btn-secondary btn-block col-md-6">Abbrechen</a>
+        </div>
+    </div>
+</form>
+{% endif %}
+{% endblock %}

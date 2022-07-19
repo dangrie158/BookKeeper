@@ -1,6 +1,7 @@
+from contextlib import suppress
 from pathlib import Path
 from django.http import HttpResponseRedirect
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
 from django.core.files.uploadedfile import UploadedFile
@@ -38,7 +39,6 @@ class NoConfirmDeleteView(DeleteView):
 
 
 class BookView(LoginRequiredMixin, ListView):
-    template_name = "book.html"
     model = models.BookEntry
     paginate_by = 20
 
@@ -106,6 +106,10 @@ class BookEntryUpdateView(LoginRequiredMixin, UpdateView):
             assert self.object is not None
             return reverse_lazy("entry-update", args=(self.object.id,))
 
+        if "split" in self.request.POST:
+            assert self.object is not None
+            return reverse_lazy("entry-split", args=(self.object.id,))
+
         messages.success(self.request, "Eintrag aktualisiert")
         return reverse_lazy("entry-list")
 
@@ -156,3 +160,22 @@ class ReceiptDeleteView(LoginRequiredMixin, NoConfirmDeleteView):
 
     def get_queryset(self):
         return super().get_queryset().filter(entry__user=self.request.user)
+
+
+class EntrySplitView(LoginRequiredMixin, UpdateView):
+    template_name = "bookkeeping/bookentry_split.html"
+    form_class = forms.SplitEntryForm
+    success_url = reverse_lazy("entry-list")
+
+    def get_queryset(self):
+        return models.BookEntry.objects.filter(user=self.request.user)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        num_years = 5
+        with suppress(ValueError):
+            num_years = int(self.request.GET.get("num_years", 5))
+
+        kwargs.update({"user": self.request.user, "num_years": num_years})
+        return kwargs
