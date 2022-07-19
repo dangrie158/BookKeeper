@@ -10,3 +10,5 @@ A simple Django App to keep a ledger of the income and expenses of the side busi
 - Write off expenses over multiple years
 - Get a yearly report for your taxes
 - Search all your expenses by date and text
+- Support for multiple users with login
+- Admin Panel
