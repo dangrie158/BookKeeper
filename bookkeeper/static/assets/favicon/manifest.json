@@ -1,5 +1,7 @@
 {
-    "name": "App",
+    "name": "BookKeeper",
+    "display": "standalone",
+    "orientation": "portrait",
     "icons": [
         {
             "src": "static/assets/favicon/android-icon-36x36.png",

@@ -1,5 +1,6 @@
 {% extends "bookkeeping/base.html" %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block styles %}
 <link href="{% static 'css/book.css' %}" rel="stylesheet">
@@ -16,9 +17,32 @@
 </div>
 {% endfor %}
 {% endif %}
-<a class="btn btn-primary floating-action-button" href="{% url 'entry-add' %}" role="button">
-    <i class="bi bi-plus"></i>
-</a>
+<section class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="#">Filter</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#filterForm" aria-controls="filterForm" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="bi bi-funnel"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="filterForm">
+            <form class="row gap-2 w-100 align-items-center" method="get">
+                <div class="form-floating col-lg-3">
+                    {% render_field search_form.term class="form-control" %}
+                    <label for="{{ search_form.term.name }}">{{ search_form.term.label }}</label>
+                </div>
+                <div class="form-floating col-lg-3">
+                    {% render_field search_form.from_date class="form-control" placeholder=search_form.from_date.label type='date' %}
+                    <label for="{{ search_form.from_date.name }}">{{ search_form.from_date.label }}</label>
+                </div>
+                <div class="form-floating col-lg-3">
+                    {% render_field search_form.to_date class="form-control" placeholder=search_form.to_date.label type='date' %}
+                    <label for="{{ search_form.to_date.name }}">{{ search_form.to_date.label }}</label>
+                </div>
+                <button class="btn btn-outline-success col-lg-2 mx-2" type="submit"><i class="bi bi-search"></i>Suchen</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% if object_list %}
 <table class="table">
     <thead>
         <tr >
@@ -44,6 +68,11 @@
         </tr>
         {% endfor %}
     {% endfor %}
-
 </table>
+{% else %}
+    <p class="lead text-muted text-center mt-5">Keine Einträge vorhanden</p>
+{% endif %}
+<a class="btn btn-primary floating-action-button" href="{% url 'entry-add' %}" role="button">
+    <i class="bi bi-plus"></i>
+</a>
 {% endblock %}

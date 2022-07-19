@@ -4,7 +4,6 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>BookKeeper | {% block title %}{% endblock %}</title>
     <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
@@ -28,16 +27,23 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="{% static 'assets/favicon/ms-icon-144x144.png' %}">
     <meta name="theme-color" content="#ffffff">
+    <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="BookKeeper" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 </head>
 
 <body>
     {% if user.is_authenticated %}
     <div class="container">
         <nav class="navbar navbar-expand-md fixed-top border-bottom bg-white" aria-label="Main navigation">
-            <div class="container-fluid">
+            <div class="container-fluid" style="min-height:32px">
+                {% block brand_section %}
                 <a href="/" class="navbar-brand">
                     <img class="my-2" src="{% static 'assets/logo.png' %}" alt="BookKeeper" width="32" height="32">
                 </a>
+                {% endblock %}
                 <button class="navbar-toggler p-0 border-0" type="button" id="navbarSideCollapse"
                     aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>

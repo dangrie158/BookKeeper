@@ -34,3 +34,13 @@ class EntryForm(forms.ModelForm):
     class Meta:
         model = models.BookEntry
         fields = ["amount", "shop", "booking_date", "type", "comment"]
+
+
+class SearchForm(forms.Form):
+    term = forms.CharField(max_length=100, label="Suchbegriff", required=False)
+    from_date = booking_date = forms.DateField(
+        widget=forms.widgets.DateInput(format="%Y-%m-%d"), label="Von", required=False
+    )
+    to_date = booking_date = forms.DateField(
+        widget=forms.widgets.DateInput(format="%Y-%m-%d"), label="Bis", required=False
+    )

@@ -1,5 +1,3 @@
-from datetime import date
-import os
 from pathlib import Path
 from django.http import HttpResponseRedirect
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
@@ -8,6 +6,7 @@ from django.urls import reverse_lazy, reverse
 from django.core.files.uploadedfile import UploadedFile
 from django.conf import settings
 from django.contrib import messages
+from django.db.models import Q
 
 from bookkeeping import models
 from bookkeeping import forms
@@ -45,11 +44,27 @@ class BookView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        return queryset.filter(user=self.request.user)
+
+        search_params = forms.SearchForm(self.request.GET)
+        search_params.is_valid()
+
+        search_terms = Q()
+        if search_params.cleaned_data["from_date"] is not None:
+            search_terms &= Q(booking_date__gte=search_params.cleaned_data["from_date"])
+
+        if search_params.cleaned_data["to_date"] is not None:
+            search_terms &= Q(booking_date__lte=search_params.cleaned_data["to_date"])
+
+            print(search_params.cleaned_data["to_date"])
+
+        if term := search_params.cleaned_data["term"]:
+            search_terms &= Q(shop__icontains=term) | Q(shop__icontains=term)
+
+        return queryset.filter(search_terms, user=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update({"today": date.today()})
+        context.update({"search_form": forms.SearchForm(self.request.GET)})
         return context
 
 
