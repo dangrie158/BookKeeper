@@ -12,3 +12,6 @@ A simple Django App to keep a ledger of the income and expenses of the side busi
 - Search all your expenses by date and text
 - Support for multiple users with login
 - Admin Panel
+
+## Attribution
+[Budget icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/budget)
