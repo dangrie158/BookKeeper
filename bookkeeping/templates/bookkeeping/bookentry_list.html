@@ -56,7 +56,7 @@
     {% regroup object_list by booking_month as month_objects %}
     {% for month in month_objects %}
         <tr class="table-dark">
-            <th colspan="3" class="text-end">{{ month.grouper | date:'F Y' }}</th>
+            <th colspan="3" class="text-end pe-4">{{ month.grouper | date:'F Y' }}</th>
         </tr>
         {% for entry in month.list %}
         <tr role="button" {% if entry.is_booked_in_future %}class="disabled"{% endif %} onclick="window.location='{% url 'entry-update' entry.id %}'">

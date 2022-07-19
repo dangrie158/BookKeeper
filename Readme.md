@@ -1,6 +1,6 @@
 # BookKeeper
 
-![](bookkeeper/static/assets/favicon/android-icon-192x192.png)
+![](bookkeeper/static/assets/favicon/192x192.png)
 
 A simple Django App to keep a ledger of the income and expenses of the side business of my wife.
 
