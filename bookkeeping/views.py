@@ -2,6 +2,7 @@ from contextlib import suppress
 from pathlib import Path
 from django.http import HttpResponseRedirect
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.views.generic.dates import YearArchiveView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
 from django.core.files.uploadedfile import UploadedFile
@@ -179,3 +180,12 @@ class EntrySplitView(LoginRequiredMixin, UpdateView):
 
         kwargs.update({"user": self.request.user, "num_years": num_years})
         return kwargs
+
+
+class SummaryView(LoginRequiredMixin, YearArchiveView):
+    date_field = "booking_date"
+    make_object_list = True
+    allow_future = True
+
+    def get_queryset(self):
+        return models.BookEntry.objects.filter(user=self.request.user).order_by("booking_date")

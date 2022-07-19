@@ -1,0 +1,90 @@
+{% extends "bookkeeping/base.html" %}
+{% load static %}
+{% load entry_stats %}
+
+{% block title %}Jahresübersicht {{ year | date:"Y" }}{% endblock %}
+
+{% block content %}
+<h1>Jahresübersicht {{ year | date:"Y" }}</h1>
+
+
+
+<table class="table table-bordered">
+    <thead>
+        <tr class="text-center">
+            <th>Einnahmen</th>
+            <th>Ausgaben</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% regroup object_list by booking_month as month_objects %}
+    {% for month in month_objects %}
+        <tr class="table-dark">
+            <th colspan="2">
+                <div  class="hstack gap-4 text-end">
+                    <p class="mb-0">{{ month.grouper | date:'F Y' }}</p>
+                    <div class="vstack month-summary">
+                        <small class="font-monospace text-success">{{ month.list | entry_sum:"IN" | floatformat:2 }}€</small>
+                        <small class="font-monospace text-danger">{{ month.list | entry_sum:"EX" | floatformat:2 }}€</small>
+                    </div>
+                </div>
+            </th>
+        </tr>
+        {% for pair in month.list|zip_entries %}
+        <tr>
+            {% if pair.in_entry %}
+            <td style="width:50%" role="button" {% if pair.in_entry.is_booked_in_future %}class="disabled"{% endif %} onclick="window.location='{% url 'entry-update' pair.in_entry.id %}'">
+                <div class="row">
+                    <p class="col-md text-truncate my-0">
+                        <small>{{ pair.in_entry.booking_date | date:'d. M' }}</small>
+                        <span class="text-end">{{ pair.in_entry.shop | truncatechars:20 }}</span>
+                    </p>
+                    <p class="col-md-3 font-monospace text-end my-0">{{ pair.in_entry.amount | floatformat:2 }}{{ pair.in_entry.currency }}</p>
+                </div>
+            </td>
+            {% else %}
+            <td></td>
+            {% endif %}
+
+            {% if pair.ex_entry %}
+            <td style="width:50%" role="button" {% if pair.ex_entry.is_booked_in_future %}class="disabled"{% endif %} onclick="window.location='{% url 'entry-update' pair.ex_entry.id %}'">
+                <div class="row">
+                    <p class="col-md text-truncate my-0">
+                        <small>{{ pair.ex_entry.booking_date | date:'d. M' }}</small>
+                        <span class="text-end">{{ pair.ex_entry.shop | truncatechars:20 }}</span>
+                    </p>
+                    <p class="col-md-3 font-monospace text-end my-0">{{ pair.ex_entry.amount | floatformat:2 }}{{ pair.ex_entry.currency }}</p>
+                </div>
+            </td>
+            {% else %}
+            <td></td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr class="table-dark border-top border-3">
+            <td colspan="2" class="text-center fs-5 fw-bold">Jahresergebnis</td>
+        </tr>
+        <tr class="table-dark">
+            <td>
+                <div class="text-end font-monospace text-success">{{ object_list | entry_sum:'IN' }}€</div>
+            </td>
+            <td>
+                <div class="text-end font-monospace text-danger">{{ object_list | entry_sum:'EX' }}€</div>
+            </td>
+        </tr>
+        <tr class="table-dark">
+            <td>
+                <div class="font-monospace text-start fw-bold fs-5">&#425;</div>
+            </td>
+            <td>
+                {% with year_result=object_list|entry_sum %}
+                <div class="font-monospace text-end fw-bold {% if year_result <= 0 %}text-danger{% else %}text-success{% endif %} fs-5">{{ year_result }}€</div>
+                {% endwith %}
+            </td>
+        </tr>
+    </tfoot>
+</table>
+{% endblock %}
