@@ -40,7 +40,7 @@ class NoConfirmDeleteView(DeleteView):
 class BookView(LoginRequiredMixin, ListView):
     template_name = "book.html"
     model = models.BookEntry
-    paginate_by = 30
+    paginate_by = 20
 
     def get_queryset(self):
         queryset = super().get_queryset()

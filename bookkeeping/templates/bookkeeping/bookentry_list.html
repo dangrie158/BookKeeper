@@ -25,19 +25,21 @@
         </button>
         <div class="collapse navbar-collapse" id="filterForm">
             <form class="row gap-2 w-100 align-items-center" method="get">
-                <div class="form-floating col-lg-3">
+                <div class="form-floating p-0 ms-2 col-lg-3">
                     {% render_field search_form.term class="form-control" %}
                     <label for="{{ search_form.term.name }}">{{ search_form.term.label }}</label>
                 </div>
-                <div class="form-floating col-lg-3">
+                <div class="form-floating p-0 ms-2 col-lg-3">
                     {% render_field search_form.from_date class="form-control" placeholder=search_form.from_date.label type='date' %}
                     <label for="{{ search_form.from_date.name }}">{{ search_form.from_date.label }}</label>
                 </div>
-                <div class="form-floating col-lg-3">
+                <div class="form-floating p-0 ms-2 col-lg-3">
                     {% render_field search_form.to_date class="form-control" placeholder=search_form.to_date.label type='date' %}
                     <label for="{{ search_form.to_date.name }}">{{ search_form.to_date.label }}</label>
                 </div>
-                <button class="btn btn-outline-success col-lg-2 mx-2" type="submit"><i class="bi bi-search"></i>Suchen</button>
+                <div class="btn-group col-lg-2 mx-2" role="group" >
+                    <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i>Suchen</button>
+                </div>
             </form>
         </div>
     </div>
@@ -69,9 +71,40 @@
         {% endfor %}
     {% endfor %}
 </table>
+
+{% if page_obj.has_other_pages %}
+<nav>
+    <ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+    <li class="page-item">
+        <a class="page-link" href="?page={{page_obj.prev_page_number}}">
+            <span aria-hidden="true">&laquo;</span>
+            <span class="sr-only">Zurück</span>
+        </a>
+    </li>
+    {% endif %}
+    <li class="page-item disabled">
+        <a class="page-link" href="#">Seite {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</a>
+    </li>
+    {% if page_obj.has_next %}
+    <li class="page-item">
+        <a class="page-link" href="{% url 'entry-list' %}?page={{page_obj.next_page_number}}">
+            <span aria-hidden="true">&raquo;</span>
+            <span class="sr-only">Weiter</span>
+        </a>
+    </li>
+    {% endif %}
+    </ul>
+</nav>
 {% else %}
-    <p class="lead text-muted text-center mt-5">Keine Einträge vorhanden</p>
+<p class="text-muted text-center"><em>Keine weiteren Einträge</em></p>
 {% endif %}
+
+{% else %}
+<p class="lead text-muted text-center mt-5">Keine Einträge vorhanden</p>
+{% endif %}
+
+
 <a class="btn btn-primary floating-action-button" href="{% url 'entry-add' %}" role="button">
     <i class="bi bi-plus"></i>
 </a>
