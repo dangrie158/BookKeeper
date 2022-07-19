@@ -23,3 +23,7 @@ tr.disabled td.text-danger {
     margin: 0;
     transform: translateY(-10px);
 }
+
+.month-summary small {
+    font-size: 0.8rem;
+}

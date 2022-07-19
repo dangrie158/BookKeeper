@@ -1,6 +1,7 @@
 {% extends "bookkeeping/base.html" %}
 {% load static %}
 {% load widget_tweaks %}
+{% load entry_stats %}
 
 {% block styles %}
 <link href="{% static 'css/book.css' %}" rel="stylesheet">
@@ -56,16 +57,24 @@
     {% regroup object_list by booking_month as month_objects %}
     {% for month in month_objects %}
         <tr class="table-dark">
-            <th colspan="3" class="text-end pe-4">{{ month.grouper | date:'F Y' }}</th>
+            <th colspan="3">
+                <div  class="hstack gap-4 text-end">
+                    <p class="mb-0">{{ month.grouper | date:'F Y' }}</p>
+                    <div class="vstack month-summary">
+                        <small class="font-monospace text-success">{{ month | entry_sum:"IN" | floatformat:2 }}€</small>
+                        <small class="font-monospace text-danger">-{{ month | entry_sum:"EX" | floatformat:2 }}€</small>
+                    </div>
+                </div>
+            </th>
         </tr>
         {% for entry in month.list %}
         <tr role="button" {% if entry.is_booked_in_future %}class="disabled"{% endif %} onclick="window.location='{% url 'entry-update' entry.id %}'">
             <td>{{ entry.booking_date | date:'d.F' }}</td>
             <td class="fw-bolder text-truncate">{{ entry.shop | truncatechars:20 }}</td>
             {% if entry.type == 'EX' %}
-            <td class="font-monospace text-danger text-end">-{{ entry.amount }}{{ entry.currency }}</td>
+            <td class="font-monospace text-danger text-end">-{{ entry.amount | floatformat:2 }}{{ entry.currency }}</td>
             {% else %}
-            <td class="font-monospace text-success text-end">{{ entry.amount }}{{ entry.currency }}</td>
+            <td class="font-monospace text-success text-end">{{ entry.amount | floatformat:2 }}{{ entry.currency }}</td>
             {% endif %}
         </tr>
         {% endfor %}

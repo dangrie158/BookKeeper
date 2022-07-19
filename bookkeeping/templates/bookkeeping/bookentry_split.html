@@ -13,7 +13,7 @@
 
 <h2 class="text-center">
     Ausgabe über
-    <span class="font-monospace text-danger text-end">{{ object.amount }}{{ object.currency }}</span>
+    <span class="font-monospace text-danger text-end">{{ object.amount | floatformat:2 }}{{ object.currency }}</span>
     bei {{ object.shop }}
     <br />
     <small>über {{ request.GET.num_years|default:'<output id="numYearsOutput">5</output>' }} Jahre abschreiben</small>
