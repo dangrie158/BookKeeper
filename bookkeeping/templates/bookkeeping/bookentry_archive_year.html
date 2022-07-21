@@ -6,8 +6,11 @@
 
 {% block content %}
 <h1>Jahresübersicht {{ year | date:"Y" }}</h1>
-
-
+<div class="d-print-none">
+    {% autoescape off %}
+    {{ plot }}
+    {% endautoescape %}
+</div>
 
 <table class="table table-bordered">
     <thead>

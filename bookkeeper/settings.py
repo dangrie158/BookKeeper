@@ -128,7 +128,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 AUTH_USER_MODEL = "bookkeeping.User"
 
+import locale
+
 LANGUAGE_CODE = "de-DE"
+locale.setlocale(locale.LC_ALL, LANGUAGE_CODE.replace("-", "_"))
 TIME_ZONE = "Europe/Berlin"
 USE_I18N = True
 USE_TZ = True
@@ -136,7 +139,6 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = ["bookkeeper/static"]
 STATIC_ROOT = "/var/www/bookkeeper/static/"
-
 
 if DEBUG:
     MEDIA_URL = "./static/media/"

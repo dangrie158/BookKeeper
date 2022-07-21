@@ -2,17 +2,20 @@ from contextlib import suppress
 from pathlib import Path
 from urllib.parse import urlparse
 
+import plotly.graph_objects as go
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.uploadedfile import UploadedFile
-from django.db.models import Q
+from django.db.models import Q, Sum
+from django.db.models.functions import Coalesce, ExtractMonth
 from django.http import HttpResponseRedirect
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 from django.views.generic.dates import YearArchiveView
+from plotly.offline import plot
 
 from bookkeeping import forms, models
 
@@ -190,6 +193,62 @@ class SummaryView(LoginRequiredMixin, YearArchiveView):
 
     def get_queryset(self):
         return models.BookEntry.objects.filter(user=self.request.user).order_by("booking_date")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({"plot": self.get_plot()})
+        return context
+
+    def get_plot(self):
+        import calendar
+
+        month_names = list(calendar.month_abbr)[1:]
+        year = self.get_year()
+
+        entries_for_year = self.get_queryset().filter(booking_date__year=year)
+        summary_data = (
+            entries_for_year.annotate(month=ExtractMonth("booking_date"))
+            .values("month")
+            .annotate(
+                expenses=Sum("amount", filter=Q(type="EX"), default=0),
+                income=Sum("amount", filter=Q(type="IN"), default=0),
+            )
+            .order_by("month")
+            .values("month", "income", "expenses")
+        )
+        print(summary_data)
+        income_by_month = {entry["month"]: entry["income"] for entry in summary_data}
+        expenses_by_month = {entry["month"]: entry["expenses"] for entry in summary_data}
+
+        fig = go.Figure(
+            go.Bar(
+                x=month_names,
+                y=[income_by_month.get(month, 0) for month in range(1, 13)],
+                name="Einnahmen",
+                marker_color="#198754",
+            )
+        )
+        fig.add_trace(
+            go.Bar(
+                x=month_names,
+                y=[expenses_by_month.get(month, 0) for month in range(1, 13)],
+                name="Ausgaben",
+                marker_color="#dc3545",
+            )
+        )
+
+        fig.update_layout(
+            barmode="group",
+            xaxis={"categoryorder": "array", "categoryarray": ["Einnahmen", "Ausgaben"]},
+            showlegend=False,
+            margin={"t": 25, "b": 25, "r": 25, "l": 25},
+            height=300,
+        )
+        fig.update_yaxes(tickprefix="€")
+        config = {
+            "staticPlot": True,
+        }
+        return plot(fig, output_type="div", config=config)
 
 
 def authenticate_media_query(request: HttpRequest):
