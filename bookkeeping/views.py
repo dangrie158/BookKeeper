@@ -216,7 +216,6 @@ class SummaryView(LoginRequiredMixin, YearArchiveView):
             .order_by("month")
             .values("month", "income", "expenses")
         )
-        print(summary_data)
         income_by_month = {entry["month"]: entry["income"] for entry in summary_data}
         expenses_by_month = {entry["month"]: entry["expenses"] for entry in summary_data}
 
