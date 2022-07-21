@@ -39,7 +39,9 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 
 ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]"]
 if "UPSTREAM_HOST" in os.environ:
-    ALLOWED_HOSTS.append(os.environ["UPSTREAM_HOST"])
+    HOSTNAME = os.environ["UPSTREAM_HOST"]
+    ALLOWED_HOSTS.append(HOSTNAME)
+    CSRF_TRUSTED_ORIGINS = [f"https://{HOSTNAME}"]
 
 INTERNAL_IPS = ["127.0.0.1"]
 
