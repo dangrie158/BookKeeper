@@ -2,6 +2,9 @@
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" && pwd)/"
 echo "${BASE_DIR}"
 
+set -e
+pre-commit run --all-files
+
 # load the prod-env file
 if [ -f .env ]; then
     # Load Environment Variables

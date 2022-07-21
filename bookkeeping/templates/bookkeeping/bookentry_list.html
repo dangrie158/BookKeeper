@@ -70,7 +70,7 @@
         {% for entry in month.list %}
         <tr role="button" {% if entry.is_booked_in_future %}class="disabled"{% endif %} onclick="window.location='{% url 'entry-update' entry.id %}'">
             <td>{{ entry.booking_date | date:'d. M' }}</td>
-            <td class="fw-bolder text-truncate">{{ entry.shop | truncatechars:20 }}</td>
+            <td class="fw-bolder text-truncate">{{ entry.shop | truncatechars:30 }}</td>
             {% if entry.type == 'EX' %}
             <td class="font-monospace text-danger text-end">-{{ entry.amount | floatformat:2 }}{{ entry.currency }}</td>
             {% else %}
