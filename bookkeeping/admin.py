@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from bookkeeping.models import User, BookEntry, Receipt
+
+from bookkeeping.models import BookEntry, Receipt, User
 
 
 class ReceiptInline(admin.TabularInline):

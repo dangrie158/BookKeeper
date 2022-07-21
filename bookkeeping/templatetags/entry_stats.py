@@ -1,5 +1,6 @@
 from itertools import zip_longest
 from typing import Iterable, NamedTuple
+
 from django import template
 
 from bookkeeping.models import BookEntry

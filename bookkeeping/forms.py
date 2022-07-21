@@ -1,6 +1,7 @@
 from datetime import date
-from django.forms import ValidationError
+
 from django import forms
+from django.forms import ValidationError
 
 from bookkeeping import models
 
@@ -48,7 +49,10 @@ class SplitEntryForm(forms.ModelForm):
             if year == 1:
                 initial_value += difference
             self.fields[f"year_{year}"] = forms.DecimalField(
-                max_digits=8, decimal_places=2, label=f"Jahr {year}", initial=initial_value
+                max_digits=8,
+                decimal_places=2,
+                label=f"Jahr {year}",
+                initial=initial_value,
             )
 
     def clean(self):

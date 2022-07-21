@@ -13,9 +13,9 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
 import django_stubs_ext
 from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv
 
 django_stubs_ext.monkeypatch()
 

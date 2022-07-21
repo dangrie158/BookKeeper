@@ -20,6 +20,7 @@ mypy = "^0.961"
 django-stubs = {extras = ["compatible-mypy"], version = "^1.12.0"}
 black = {version = "^22.6.0", allow-prereleases = true}
 django-browser-reload = "^1.6.0"
+pre-commit = "^2.20.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -30,3 +31,9 @@ plugins = ["mypy_django_plugin.main"]
 
 [tool.django-stubs]
 django_settings_module = "bookkeeper.settings"
+
+[tool.isort]
+profile = "black"
+
+[tool.black]
+line-length = 120

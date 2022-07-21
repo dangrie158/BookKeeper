@@ -1,20 +1,20 @@
 from contextlib import suppress
 from pathlib import Path
 from urllib.parse import urlparse
-from django.http import HttpResponseRedirect
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
-from django.views.generic.dates import YearArchiveView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy, reverse
-from django.core.files.uploadedfile import UploadedFile
+
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.files.uploadedfile import UploadedFile
 from django.db.models import Q
+from django.http import HttpResponseRedirect
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse
+from django.urls import reverse, reverse_lazy
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from django.views.generic.dates import YearArchiveView
 
-from bookkeeping import models
-from bookkeeping import forms
+from bookkeeping import forms, models
 
 
 def upload_receipt_file(file: UploadedFile, entry: models.BookEntry) -> models.Receipt:
