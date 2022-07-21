@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  nginx:
+    build: ./nginx/
+    restart: always
+    volumes:
+      - gunicorn_run:/run/gunicorn/
+      - web_static:/var/www/bookkeeper/static/:ro
+      - ../${APP_DATA_STORAGE}/media:/var/www/bookkeeper/media/:ro
+    ports:
+      - "8888:80"
+    depends_on:
+      - django
+
+  django:
+    build:
+      context: ../
+      dockerfile: ./deploy/web/Dockerfile
+    restart: always
+    volumes:
+      - ../${APP_DATA_STORAGE}/media:/var/www/bookkeeper/media
+      - ../${APP_DATA_STORAGE}/db:${APP_DATA_LOCATION}/db/
+      - gunicorn_run:/run/gunicorn/
+      - web_static:/var/www/bookkeeper/static
+
+volumes:
+  gunicorn_run:
+  web_static:

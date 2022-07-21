@@ -10,26 +10,37 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
+from dotenv import load_dotenv
 import django_stubs_ext
+from django.core.exceptions import ImproperlyConfigured
 
 django_stubs_ext.monkeypatch()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+DEBUG = bool(os.environ.get("DEBUG", False))
+if DEBUG:
+    load_dotenv(BASE_DIR / ".env-dev")
+else:
+    load_dotenv(BASE_DIR / ".env")
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-cp*401trpi9pp(7*rlsl(i7+6@!xal3^+tcxgm5go#wh*!3x&h"
+if not "SECRET_KEY" in os.environ:
+    raise ImproperlyConfigured("You need to set the 'SECRET_KEY' environment variable")
+SECRET_KEY = os.environ["SECRET_KEY"]
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]", "192.168.178.45"]
+ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]"]
+if "UPSTREAM_HOST" in os.environ:
+    ALLOWED_HOSTS.append(os.environ["UPSTREAM_HOST"])
+
 INTERNAL_IPS = ["127.0.0.1"]
 
 INSTALLED_APPS = [
@@ -85,14 +96,18 @@ WSGI_APPLICATION = "bookkeeper.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
+if not "APP_DATA_LOCATION" in os.environ:
+    raise ImproperlyConfigured("You need to set the 'APP_DATA_LOCATION' environment variable")
 
+APP_DATA_LOCATION = Path(os.environ["APP_DATA_LOCATION"])
+DB_PATH = APP_DATA_LOCATION / "db/db.sqlite3"
+DB_PATH.parent.mkdir(exist_ok=True)
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": DB_PATH,
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -114,11 +129,8 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTH_USER_MODEL = "bookkeeping.User"
 
 LANGUAGE_CODE = "de-DE"
-
 TIME_ZONE = "Europe/Berlin"
-
 USE_I18N = True
-
 USE_TZ = True
 
 STATIC_URL = "static/"
@@ -127,12 +139,12 @@ STATIC_ROOT = "/var/www/bookkeeper/static/"
 
 
 if DEBUG:
-    MEDIA_URL = "./static/"
-    MEDIA_ROOT = "./media_files/"
-    STATICFILES_DIRS += ["./media_files/"]
+    MEDIA_URL = "static/"
+    MEDIA_ROOT = APP_DATA_LOCATION / "media"
+    STATICFILES_DIRS += [APP_DATA_LOCATION / "media"]
 else:
-    MEDIA_ROOT = "/media/"
-    MEDIA_ROOT = "/var/www/bookkeeper/media/"
+    MEDIA_URL = "media/"
+    MEDIA_ROOT = APP_DATA_LOCATION / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

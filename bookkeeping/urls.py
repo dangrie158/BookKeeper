@@ -12,4 +12,5 @@ urlpatterns = [
     path("entries/<int:pk>/split/", views.EntrySplitView.as_view(), name="entry-split"),
     path("receipts/<int:pk>/delete/", views.ReceiptDeleteView.as_view(), name="receipt-delete"),
     path("summary/year/<int:year>/", views.SummaryView.as_view(), name="summary-yearly"),
+    path("auth/media/", views.authenticate_media_query, name="auth-media"),
 ]

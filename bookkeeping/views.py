@@ -1,5 +1,6 @@
 from contextlib import suppress
 from pathlib import Path
+from urllib.parse import urlparse
 from django.http import HttpResponseRedirect
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.views.generic.dates import YearArchiveView
@@ -9,6 +10,8 @@ from django.core.files.uploadedfile import UploadedFile
 from django.conf import settings
 from django.contrib import messages
 from django.db.models import Q
+from django.http.request import HttpRequest
+from django.http.response import HttpResponse
 
 from bookkeeping import models
 from bookkeeping import forms
@@ -189,3 +192,16 @@ class SummaryView(LoginRequiredMixin, YearArchiveView):
 
     def get_queryset(self):
         return models.BookEntry.objects.filter(user=self.request.user).order_by("booking_date")
+
+
+def authenticate_media_query(request: HttpRequest):
+    """
+    Check if the user is allowed to access the requested files
+    """
+    request_uri = request.headers.get("X-Original-URI", "")
+    request_parts = urlparse(request_uri)
+    request_path = Path(request_parts.path)
+    allowed_media_path_for_user = Path(settings.MEDIA_URL) / f"receipts/user_{request.user.id}"
+    if request_path.is_relative_to(allowed_media_path_for_user):
+        return HttpResponse(status=200)
+    return HttpResponse(status=403)

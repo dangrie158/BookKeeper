@@ -159,5 +159,8 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-# ignore the dev folder for uplaods
-media_files/**
+# don't track the production env settings
+.env
+
+# ignore the production data directory
+app_data/**
