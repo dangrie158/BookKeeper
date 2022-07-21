@@ -9,6 +9,9 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
+            "env": {
+                "DEBUG": "True"
+            },
             "args": [
                 "runserver"
                 "0.0.0.0:8000"

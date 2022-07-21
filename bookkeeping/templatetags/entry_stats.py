@@ -6,8 +6,6 @@ from bookkeeping.models import BookEntry
 
 
 def entry_sum(entries: Iterable[BookEntry], entry_type: str | None = None):
-    print("Mark" * 40)
-    print(entries)
     if entry_type is not None:
         entries = filter(lambda e: e.type == entry_type, entries)
 

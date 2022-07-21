@@ -59,8 +59,6 @@ class BookView(LoginRequiredMixin, ListView):
         if search_params.cleaned_data["to_date"] is not None:
             search_terms &= Q(booking_date__lte=search_params.cleaned_data["to_date"])
 
-            print(search_params.cleaned_data["to_date"])
-
         if term := search_params.cleaned_data["term"]:
             search_terms &= Q(shop__icontains=term) | Q(shop__icontains=term)
 

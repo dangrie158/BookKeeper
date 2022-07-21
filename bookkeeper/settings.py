@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = bool(os.environ.get("DEBUG", False))
 if DEBUG:
-    load_dotenv(BASE_DIR / ".env-dev")
+    load_dotenv(BASE_DIR / ".env-dev", override=True)
 else:
     load_dotenv(BASE_DIR / ".env")
 
@@ -139,9 +139,9 @@ STATIC_ROOT = "/var/www/bookkeeper/static/"
 
 
 if DEBUG:
-    MEDIA_URL = "static/"
+    MEDIA_URL = "./static/media/"
     MEDIA_ROOT = APP_DATA_LOCATION / "media"
-    STATICFILES_DIRS += [APP_DATA_LOCATION / "media"]
+    STATICFILES_DIRS += [("media", APP_DATA_LOCATION / "media")]
 else:
     MEDIA_URL = "media/"
     MEDIA_ROOT = APP_DATA_LOCATION / "media"
