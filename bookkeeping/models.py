@@ -18,12 +18,12 @@ class BookEntry(models.Model):
         INCOME = ("IN", "Einnahme")
 
     user = models.ForeignKey(User, on_delete=models.PROTECT)
-    amount = models.DecimalField(max_digits=8, decimal_places=2, verbose_name="Betrag")
-    currency = models.CharField(max_length=3, default="€", verbose_name="Währung")
+    amount = models.DecimalField(max_digits=8, decimal_places=2, null=False, verbose_name="Betrag")
+    currency = models.CharField(max_length=3, default="€", blank=False, null=False, verbose_name="Währung")
     shop = models.CharField(max_length=100, verbose_name="Shop")
     booking_date = models.DateField(verbose_name="Buchungsdatum")
-    type = models.CharField(choices=EntryType.choices, max_length=2, verbose_name="Typ")
-    comment = models.TextField(blank=True, verbose_name="Kommentar")
+    type = models.CharField(choices=EntryType.choices, max_length=2, blank=False, null=False, verbose_name="Typ")
+    comment = models.TextField(blank=True, null=False, verbose_name="Kommentar")
 
     @property
     def is_booked_in_future(self):
