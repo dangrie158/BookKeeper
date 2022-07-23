@@ -3,6 +3,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import plotly.graph_objects as go
+import plotly.io as plotly_io
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -225,6 +226,7 @@ class SummaryView(LoginRequiredMixin, YearArchiveView):
                 y=[income_by_month.get(month, 0) for month in range(1, 13)],
                 name="Einnahmen",
                 marker_color="#198754",
+                hovertemplate="%{y}",
             )
         )
         fig.add_trace(
@@ -233,21 +235,22 @@ class SummaryView(LoginRequiredMixin, YearArchiveView):
                 y=[expenses_by_month.get(month, 0) for month in range(1, 13)],
                 name="Ausgaben",
                 marker_color="#dc3545",
+                hovertemplate="%{y}",
             )
         )
 
         fig.update_layout(
             barmode="group",
-            xaxis={"categoryorder": "array", "categoryarray": ["Einnahmen", "Ausgaben"]},
+            xaxis={"fixedrange": True, "categoryorder": "array", "categoryarray": ["Einnahmen", "Ausgaben"]},
+            yaxis={"fixedrange": True},
             showlegend=False,
             margin={"t": 25, "b": 25, "r": 25, "l": 25},
             height=300,
         )
         fig.update_yaxes(tickprefix="€")
-        config = {
-            "staticPlot": True,
-        }
-        return plot(fig, output_type="div", config=config)
+        config = {"displayModeBar": False, "locale": settings.LANGUAGE_CODE}
+
+        return plotly_io.to_html(fig, div_id="yearlyPlot", full_html=False, config=config)
 
 
 def authenticate_media_query(request: HttpRequest):

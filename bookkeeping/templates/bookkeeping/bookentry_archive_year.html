@@ -6,10 +6,15 @@
 
 {% block content %}
 <h1>Jahresübersicht {{ year | date:"Y" }}</h1>
-<div class="d-print-none">
+<div class="d-print-none" id="yearlyChart">
     {% autoescape off %}
     {{ plot }}
     {% endautoescape %}
+    <script>
+    document.getElementById("yearlyPlot").on('plotly_click', function(data){
+        location.href = `#${data.points[0].x}`;
+    });
+    </script>
 </div>
 
 <table class="table table-bordered">
@@ -25,7 +30,7 @@
         <tr class="table-dark">
             <th colspan="2">
                 <div  class="hstack gap-4 text-end">
-                    <p class="mb-0">{{ month.grouper | date:'F Y' }}</p>
+                    <p class="mb-0"><a name="{{ month.grouper|date:'F'|slice:":3" }}">{{ month.grouper | date:'F Y' }}</a></p>
                     <div class="vstack month-summary">
                         <small class="font-monospace text-success">{{ month.list | entry_sum:"IN" | floatformat:2 }}€</small>
                         <small class="font-monospace text-danger">{{ month.list | entry_sum:"EX" | floatformat:2 }}€</small>
