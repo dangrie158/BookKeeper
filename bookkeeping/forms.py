@@ -12,7 +12,7 @@ class EntryForm(forms.ModelForm):
     booking_date = forms.DateField(
         widget=forms.widgets.DateInput(format="%Y-%m-%d"),
         label="Buchungsdatum",
-        initial=date.today().strftime("%Y-%m-%d"),
+        initial=lambda: date.today().strftime("%Y-%m-%d"),
     )
     type = forms.ChoiceField(
         choices=models.BookEntry.EntryType.choices,
