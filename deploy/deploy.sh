@@ -17,9 +17,13 @@ if [[ ! -z "${DEPLOY_HOST}" ]]; then
 fi
 
 function remote_command(){
-    ssh ${DEPLOY_HOST} "cd ${DEPLOY_PATH}/bookkeeper && ${1}"
+    ssh ${DEPLOY_HOST} "cd ${DEPLOY_PATH}/bookkeeper && ${@}"
 }
 
-remote_command "docker-compose --env-file=.env --file=deploy/docker-compose.yml down"
-remote_command "docker-compose --env-file=.env --file=deploy/docker-compose.yml build"
-remote_command "docker-compose --env-file=.env --file=deploy/docker-compose.yml up -d"
+function remote_docker_compose(){
+    remote_command docker-compose --env-file=.env --file=deploy/docker-compose.yml --project-name=bookkeeper $@
+}
+
+remote_docker_compose down
+remote_docker_compose build
+remote_docker_compose up -d
