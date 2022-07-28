@@ -38,3 +38,7 @@ profile = "black"
 
 [tool.black]
 line-length = 120
+
+[[tool.mypy.overrides]]
+module = "plotly.*"
+ignore_missing_imports = true

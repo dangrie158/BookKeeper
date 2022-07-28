@@ -139,13 +139,13 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
-STATICFILES_DIRS = ["bookkeeper/static"]
+STATICFILES_DIRS: list[str | tuple[str, str]] = ["bookkeeper/static"]
 STATIC_ROOT = "/var/www/bookkeeper/static/"
 
 if DEBUG:
     MEDIA_URL = "./static/media/"
     MEDIA_ROOT = APP_DATA_LOCATION / "media"
-    STATICFILES_DIRS += [("media", APP_DATA_LOCATION / "media")]
+    STATICFILES_DIRS += [("media", str(APP_DATA_LOCATION / "media"))]
 else:
     MEDIA_URL = "media/"
     MEDIA_ROOT = APP_DATA_LOCATION / "media"
