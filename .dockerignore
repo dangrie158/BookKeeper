@@ -1,0 +1,19 @@
+# dev db data folder
+app_data/**
+.env-dev
+
+# Readme related
+Readme.md
+.assets/**
+
+# git
+.git/**
+.gitignore
+
+# deployment scripts and configuration
+deploy/**
+
+# various development configs / caches
+.vscode/**
+.mypy_cache/**
+.pre-commit-config.yaml
