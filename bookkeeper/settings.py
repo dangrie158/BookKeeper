@@ -135,7 +135,7 @@ import locale
 LANGUAGE_CODE = "de-DE"
 locale.setlocale(locale.LC_ALL, LANGUAGE_CODE.replace("-", "_"))
 TIME_ZONE = "Europe/Berlin"
-USE_I18N = True
+USE_I18N = False
 USE_TZ = True
 
 STATIC_URL = "static/"
