@@ -1,15 +1,23 @@
 from datetime import date
+from decimal import Decimal
 from pathlib import Path
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from django.utils import timezone
+from django.utils.functional import cached_property
 
 
 class User(AbstractUser):
     pass
+
+    class Meta:
+        verbose_name = "Benutzer"
+        verbose_name_plural = "Benutzer"
 
 
 class BookEntry(models.Model):
@@ -85,3 +93,46 @@ class Receipt(models.Model):
 @receiver(pre_delete, sender=Receipt)
 def remove_files(sender, instance, using, **kwargs):
     instance.file.delete()
+
+
+class TripFlatRate(models.Model):
+    rate = models.DecimalField(max_digits=4, decimal_places=2, verbose_name="Preis pro Km")
+    valid_since = models.DateField(default=timezone.now, verbose_name="gültig Ab")
+
+    class Meta:
+        verbose_name = "Kilometerpauschale"
+        verbose_name_plural = "Kilometerpauschalen"
+        ordering = ("-valid_since",)
+
+    def __str__(self):
+        return f"""Pauschale seit dem {self.valid_since.strftime("%d.%m.%Y")}: {self.rate}"""
+
+
+class BusinessTrip(models.Model):
+    book_entry = models.OneToOneField(BookEntry, null=False, on_delete=models.CASCADE)
+    distance = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        verbose_name="Gefahrene Km",
+        validators=(MinValueValidator(Decimal("0.01")),),
+    )
+
+    class Meta:
+        verbose_name = "Geschäftsreise"
+        verbose_name_plural = "Geschäftsreisen"
+
+    def __str__(self):
+        return f"""Geschäftsreise am {self.book_entry.booking_date.strftime("%d.%m.%Y")} über {self.distance:3.2f}km"""
+
+    def save(self, *args, **kwargs):
+        self.book_entry.amount = self.flatrate.rate * self.distance
+        self.book_entry.type = BookEntry.EntryType.EXPENSE
+        self.book_entry.save()
+        super().save(*args, **kwargs)
+
+    @cached_property
+    def flatrate(self):
+        # the active rate is the newest rate that was valid then the trip was booked
+        return (
+            TripFlatRate.objects.filter(valid_since__lte=self.book_entry.booking_date).order_by("-valid_since").first()
+        )

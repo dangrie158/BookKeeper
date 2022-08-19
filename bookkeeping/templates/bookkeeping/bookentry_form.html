@@ -22,6 +22,22 @@
     </div>
     {% endif %}
 
+    {% if form.distance %}
+    {% with field=form.distance %}
+    <div class="form-floating mb-3">
+        {% render_field field class="form-control" placeholder='0.00' %}
+        <label for="{{ field.name }}">{{ field.label }}</label>
+    </div>
+    {% if field.errors %}
+    <div class="invalid-feedback d-block">
+        {% for error in field.errors %}
+        <span>{{ error | escape }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    {% endif %}
+
     {% with field=form.amount %}
     <div class="form-floating mb-3">
         {% render_field field class="form-control" placeholder='0.00' %}

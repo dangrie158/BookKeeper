@@ -102,10 +102,20 @@ class BookEntryCreateView(LoginRequiredMixin, CreateView):
         return super().form_invalid(form)
 
 
-class BookEntryUpdateView(LoginRequiredMixin, UpdateView):
+class BusinessTripCreateView(BookEntryCreateView):
+    form_class = forms.BusinessTripForm
+
+
+class GenericEntryUpdateView(LoginRequiredMixin, UpdateView):
     model = models.BookEntry
-    form_class = forms.EntryForm
     success_url = reverse_lazy("entry-list")
+
+    def get_form_class(self):
+        entry = self.get_object()
+        if hasattr(entry, "businesstrip"):
+            return forms.BusinessTripForm
+        else:
+            return forms.EntryForm
 
     def get_success_url(self) -> str:
         if "upload" in self.request.POST:

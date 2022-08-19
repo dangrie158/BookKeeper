@@ -37,6 +37,27 @@ class EntryForm(forms.ModelForm):
         fields = ["amount", "shop", "booking_date", "type", "comment"]
 
 
+class BusinessTripForm(EntryForm):
+    amount = forms.DecimalField(max_digits=8, decimal_places=2, disabled=True, required=False, label="Betrag")
+    distance = forms.DecimalField(max_digits=8, decimal_places=2, label="Gefahrene Km")
+
+    def get_initial_for_field(self, field, field_name):
+        if field_name == "distance":
+            return self.instance.businesstrip.distance if hasattr(self.instance, "businesstrip") else None
+        return super().get_initial_for_field(field, field_name)
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.user = self.user
+        if hasattr(instance, "businesstrip"):
+            instance.businesstrip.distance = self.cleaned_data["distance"]
+            instance.businesstrip.save()
+        else:
+            models.BusinessTrip.objects.create(distance=self.cleaned_data["distance"], book_entry=instance)
+
+        return super().save(commit)
+
+
 class SplitEntryForm(forms.ModelForm):
     def __init__(self, user, *args, num_years=5, **kwargs):
         super().__init__(*args, **kwargs)
@@ -72,7 +93,7 @@ class SplitEntryForm(forms.ModelForm):
     def save(self, commit=True):
         if commit:
             self.instance.amount = self.cleaned_data.pop("year_1")
-            self.instance.comment = (self.instance.comment + f"\n Abgeschrieben über {self.num_years}Jahre").strip()
+            self.instance.comment = (f"""{self.instance.comment}\n Abgeschrieben über {self.num_years}Jahre""").strip()
             self.instance.save()
             for year, year_amount in enumerate(self.cleaned_data.values(), start=2):
                 new_booking_date = date(
