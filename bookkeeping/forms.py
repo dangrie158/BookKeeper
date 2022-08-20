@@ -40,6 +40,8 @@ class EntryForm(forms.ModelForm):
 class BusinessTripForm(EntryForm):
     amount = forms.DecimalField(max_digits=8, decimal_places=2, disabled=True, required=False, label="Betrag")
     distance = forms.DecimalField(max_digits=8, decimal_places=2, label="Gefahrene Km")
+    type = forms.CharField(widget=forms.HiddenInput, initial="EX")
+    shop = forms.CharField(max_length=100, label="Ziel")
 
     def get_initial_for_field(self, field, field_name):
         if field_name == "distance":

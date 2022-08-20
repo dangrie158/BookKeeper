@@ -22,6 +22,20 @@
     </div>
     {% endif %}
 
+    {% with field=form.distance %}
+    <div class="form-floating mb-3">
+        {% render_field field class="form-control" placeholder='0.00' %}
+        <label for="{{ field.name }}">{{ field.label }}</label>
+    </div>
+    {% if field.errors %}
+    <div class="invalid-feedback d-block">
+        {% for error in field.errors %}
+        <span>{{ error | escape }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
     {% with field=form.amount %}
     <div class="form-floating mb-3">
         {% render_field field class="form-control" placeholder='0.00' %}
@@ -65,23 +79,7 @@
     {% endwith %}
 
     {% with field=form.type %}
-    <div class="mb-3">
-        {{ field.label_tag }}
-        <div class="btn-group ms-5" role="group" aria-label="{{ field.label }}">
-            {% for radio in field %}
-            <input type="radio" class="btn-check" name="{{ field.name }}" id="{{ radio.data.value }}"
-                value="{{ radio.data.value }}" autocomplete="off" {% if radio.data.value == field.initial %}checked{% endif %} required>
-            <label class="btn btn-outline-primary" for="{{ radio.data.value }}">{{ radio.choice_label }}</label>
-            {% endfor %}
-        </div>
-        {% if field.errors %}
-        <div class="invalid-feedback d-block">
-            {% for error in field.errors %}
-            <span>{{ error | escape }}</span>
-            {% endfor %}
-        </div>
-        {% endif %}
-    </div>
+    {{ field }}
     {% endwith %}
 
     {% with field=form.comment %}

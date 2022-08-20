@@ -78,6 +78,7 @@ class BookEntryCreateView(LoginRequiredMixin, CreateView):
     model = models.BookEntry
     form_class = forms.EntryForm
     success_url = reverse_lazy("entry-list")
+    template_name = "bookkeeping/bookentry_form.html"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -104,6 +105,7 @@ class BookEntryCreateView(LoginRequiredMixin, CreateView):
 
 class BusinessTripCreateView(BookEntryCreateView):
     form_class = forms.BusinessTripForm
+    template_name = "bookkeeping/businesstrip_form.html"
 
 
 class GenericEntryUpdateView(LoginRequiredMixin, UpdateView):
@@ -116,6 +118,13 @@ class GenericEntryUpdateView(LoginRequiredMixin, UpdateView):
             return forms.BusinessTripForm
         else:
             return forms.EntryForm
+
+    def get_template_names(self):
+        entry = self.get_object()
+        if hasattr(entry, "businesstrip"):
+            return ["bookkeeping/businesstrip_form.html"]
+        else:
+            return ["bookkeeping/bookentry_form.html"]
 
     def get_success_url(self) -> str:
         if "upload" in self.request.POST:
