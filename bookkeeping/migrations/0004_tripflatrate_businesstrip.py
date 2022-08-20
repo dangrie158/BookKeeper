@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
                 (
                     "distance",
                     models.DecimalField(
-                        decimal_places=3,
+                        decimal_places=2,
                         max_digits=8,
                         validators=[django.core.validators.MinValueValidator(Decimal("0.01"))],
                         verbose_name="Gefahrene Km",
