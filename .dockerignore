@@ -10,9 +10,6 @@ Readme.md
 .git/**
 .gitignore
 
-# deployment scripts and configuration
-deploy/**
-
 # various development configs / caches
 .vscode/**
 .mypy_cache/**
