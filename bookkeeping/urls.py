@@ -6,7 +6,7 @@ from bookkeeping import views
 urlpatterns = [
     path("", RedirectView.as_view(url="entries/")),
     path("entries/", views.BookView.as_view(), name="entry-list"),
-    path("entries/add/", views.BookEntryCreateView.as_view(), name="entry-add"),
+    path("entries/add-entry/", views.BookEntryCreateView.as_view(), name="entry-add"),
     path("entries/add-businesstrip/", views.BusinessTripCreateView.as_view(), name="businesstrip-add"),
     path("entries/<int:pk>/", views.GenericEntryUpdateView.as_view(), name="entry-update"),
     path("entries/<int:pk>/delete/", views.BookEntryDeleteView.as_view(), name="entry-delete"),

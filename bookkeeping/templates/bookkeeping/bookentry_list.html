@@ -114,7 +114,21 @@
 {% endif %}
 
 
-<a class="btn btn-primary floating-action-button" href="{% url 'entry-add' %}" role="button">
-    <i class="bi bi-plus"></i>
-</a>
+<div class="position-fixed text-end floating-action-menu"  id="addEntryActionMenu" style="bottom: 10px; right: 10px;">
+    <div class="action-menu">
+        <div class="floating-action py-1">
+            <div class="badge bg-dark">Dienstreise</div>
+            <a href="/entries/add-businesstrip/" class="btn btn-lg btn-floating btn-secondary rounded-circle"><i class="bi bi-car-front-fill"></i></a>
+        </div>
+        <div class="floating-action py-1">
+            <div class="badge bg-dark">Einnahme / Ausgabe</div>
+            <a href="/entries/add-entry/" class="btn btn-lg btn-floating btn-success rounded-circle"><i class="bi bi-cash"></i></a>
+        </div>
+    </div>
+    <div class="d-block action-button py-1">
+        <a class="btn btn-lg btn-floating btn-primary rounded-circle" onclick="document.getElementById('addEntryActionMenu').classList.toggle('active')">
+            <i class="bi bi-plus-circle"></i>
+        </a>
+    </div>
+</div>
 {% endblock %}
