@@ -100,11 +100,26 @@
 
     {% with field=form.receipt %}
     <div class="overflow-auto d-flex mb-3">
+        <script>
+        function dropHandler(event){
+            event.preventDefault();
+            const fileUploadField = document.getElementById("{{ field.auto_id }}");
+            const iconElement = document.querySelector("#dropArea>i")
+            const fileNameElement = document.querySelector("#dropArea>p")
+            fileUploadField.files = event.dataTransfer.files;
+            iconElement.classList.replace("bi-file-earmark-arrow-up", "bi-file-earmark-check");
+            fileNameElement.innerText = event.dataTransfer.files[0].name
+        }
+        </script>
         <div class="border border-2 rounded w-100"
             style="min-width:10rem; max-width:25rem">
             <div class="m-auto text-center m-auto h-100 align-middle p-4"
                 role='button'
-                onclick="document.getElementById('{{ field.auto_id }}').click();">
+                id="dropArea"
+                onclick="document.getElementById('{{ field.auto_id }}').click();"
+                ondrop="dropHandler(event);"
+                ondragover="event.preventDefault();"
+                ondragleave="event.preventDefault();">
                 <i class="bi bi-file-earmark-arrow-up" style="font-size:7rem;"></i>
                 <p>Belegdatei Hochladen</p>
                 <input type="file" name="{{ field.name }}" id="{{ field.auto_id }}" class="d-none" accept="image/*,application/pdf"
