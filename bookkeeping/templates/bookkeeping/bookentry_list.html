@@ -18,6 +18,14 @@
 </div>
 {% endfor %}
 {% endif %}
+<script>
+function addUrlParameter(name, value) {
+  var searchParams = new URLSearchParams(window.location.search);
+  searchParams.set(name, value);
+  window.location.search = searchParams.toString();
+}
+</script>
+
 <section class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
         <a class="navbar-brand" href="#">Filter</a>
@@ -86,7 +94,7 @@
     <ul class="pagination justify-content-center">
     {% if page_obj.has_previous %}
     <li class="page-item">
-        <a class="page-link" href="?page={{page_obj.prev_page_number}}">
+        <a class="page-link" onclick="addUrlParameter('page', '{{page_obj.prev_page_number}}')">
             <span aria-hidden="true">&laquo;</span>
             <span class="sr-only">Zurück</span>
         </a>
@@ -97,7 +105,7 @@
     </li>
     {% if page_obj.has_next %}
     <li class="page-item">
-        <a class="page-link" href="{% url 'entry-list' %}?page={{page_obj.next_page_number}}">
+        <a class="page-link" onclick="addUrlParameter('page', '{{page_obj.next_page_number}}')">
             <span aria-hidden="true">&raquo;</span>
             <span class="sr-only">Weiter</span>
         </a>
