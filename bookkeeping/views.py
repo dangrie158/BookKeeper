@@ -46,6 +46,18 @@ class NoConfirmDeleteView(DeleteView):
         return HttpResponseRedirect(success_url)
 
 
+class ReturnUrlMixin:
+    """
+    This Mixin uses the returnUrl parameter as a success URL and falls back
+    to the default behaviour if not defined
+    """
+
+    def get_success_url(self) -> str:
+        if "returnUrl" in self.request.GET:
+            return self.request.GET["returnUrl"]
+        return super().get_success_url()
+
+
 class BookView(LoginRequiredMixin, ListView):
     model = models.BookEntry
     paginate_by = 20
@@ -74,7 +86,7 @@ class BookView(LoginRequiredMixin, ListView):
         return context
 
 
-class BookEntryCreateView(LoginRequiredMixin, CreateView):
+class BookEntryCreateView(LoginRequiredMixin, ReturnUrlMixin, CreateView):
     model = models.BookEntry
     form_class = forms.EntryForm
     success_url = reverse_lazy("entry-list")
@@ -108,7 +120,7 @@ class BusinessTripCreateView(BookEntryCreateView):
     template_name = "bookkeeping/businesstrip_form.html"
 
 
-class GenericEntryUpdateView(LoginRequiredMixin, UpdateView):
+class GenericEntryUpdateView(LoginRequiredMixin, ReturnUrlMixin, UpdateView):
     model = models.BookEntry
     success_url = reverse_lazy("entry-list")
 
@@ -136,7 +148,7 @@ class GenericEntryUpdateView(LoginRequiredMixin, UpdateView):
             return reverse_lazy("entry-split", args=(self.object.id,))
 
         messages.success(self.request, "Eintrag aktualisiert")
-        return reverse_lazy("entry-list")
+        return super().get_success_url()
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -158,7 +170,7 @@ class GenericEntryUpdateView(LoginRequiredMixin, UpdateView):
         return response
 
 
-class BookEntryDeleteView(LoginRequiredMixin, NoConfirmDeleteView):
+class BookEntryDeleteView(LoginRequiredMixin, ReturnUrlMixin, NoConfirmDeleteView):
     model = models.BookEntry
     success_url = reverse_lazy("entry-list")
 
@@ -187,7 +199,7 @@ class ReceiptDeleteView(LoginRequiredMixin, NoConfirmDeleteView):
         return super().get_queryset().filter(entry__user=self.request.user)
 
 
-class EntrySplitView(LoginRequiredMixin, UpdateView):
+class EntrySplitView(LoginRequiredMixin, ReturnUrlMixin, UpdateView):
     template_name = "bookkeeping/bookentry_split.html"
     form_class = forms.SplitEntryForm
     success_url = reverse_lazy("entry-list")

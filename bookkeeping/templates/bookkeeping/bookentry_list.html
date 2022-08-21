@@ -19,10 +19,20 @@
 {% endfor %}
 {% endif %}
 <script>
+function urlToAbsolutePath(url){
+    return url.toString().substring(url.origin.length);
+}
+
 function addUrlParameter(name, value) {
   var searchParams = new URLSearchParams(window.location.search);
   searchParams.set(name, value);
   window.location.search = searchParams.toString();
+}
+
+function openWithReturnUrl(target){
+    const targetUrl = new URL(target, document.location);
+    targetUrl.searchParams.set("returnUrl", urlToAbsolutePath(window.location));
+    window.location = targetUrl;
 }
 </script>
 
@@ -76,7 +86,7 @@ function addUrlParameter(name, value) {
             </th>
         </tr>
         {% for entry in month.list %}
-        <tr role="button" {% if entry.is_booked_in_future %}class="disabled"{% endif %} onclick="window.location='{% url 'entry-update' entry.id %}'">
+        <tr role="button" {% if entry.is_booked_in_future %}class="disabled"{% endif %} onclick="openWithReturnUrl('{% url 'entry-update' entry.id %}')">
             <td>{{ entry.booking_date | date:'d. M' }}</td>
             <td class="text-truncate">{{ entry.shop | truncatechars:20 }}</td>
             {% if entry.type == 'EX' %}
@@ -126,11 +136,11 @@ function addUrlParameter(name, value) {
     <div class="action-menu">
         <div class="floating-action py-1">
             <div class="badge bg-dark">Dienstreise</div>
-            <a href="/entries/add-businesstrip/" class="btn btn-lg btn-floating btn-secondary rounded-circle"><i class="bi bi-car-front-fill"></i></a>
+            <a onclick="openWithReturnUrl('/entries/add-businesstrip/')" class="btn btn-lg btn-floating btn-secondary rounded-circle"><i class="bi bi-car-front-fill"></i></a>
         </div>
         <div class="floating-action py-1">
             <div class="badge bg-dark">Einnahme / Ausgabe</div>
-            <a href="/entries/add-entry/" class="btn btn-lg btn-floating btn-success rounded-circle"><i class="bi bi-cash"></i></a>
+            <a onclick="openWithReturnUrl('/entries/add-entry/')" class="btn btn-lg btn-floating btn-success rounded-circle"><i class="bi bi-cash"></i></a>
         </div>
     </div>
     <div class="d-block action-button py-1">
