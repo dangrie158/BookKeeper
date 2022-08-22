@@ -1,6 +1,7 @@
 {% extends "bookkeeping/base.html" %}
 {% load static %}
 {% load widget_tweaks %}
+{% load return_url %}
 
 {% block title %}Eintrag Bearbeiten{% endblock %}
 
@@ -145,7 +146,8 @@
             <button class="btn btn btn-primary btn-block col-md-3" type="submit" name="save">Speichern</button>
             <button class="btn btn btn-secondary btn-block col-md-3 mx-auto" type="submit" name="split">Speichern & mehrjährig Abschreiben</button>
             {% if object %}
-            <a onclick="window.location='{% url 'entry-delete' object.id %}'+window.location.search" class="btn btn btn-danger btn-block col-md-3">Löschen</a>
+            {% url 'entry-delete' object.id as delete_url %}
+            <a href="{{ delete_url | with_return_url:request }}" class="btn btn btn-danger btn-block col-md-3">Löschen</a>
             {% endif %}
             {% if object %}
                 <button type="submit" class="d-none" name="upload" id="uploadBtn"></button>
