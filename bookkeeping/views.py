@@ -9,14 +9,13 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.uploadedfile import UploadedFile
 from django.db.models import Q, Sum
-from django.db.models.functions import Coalesce, ExtractMonth
+from django.db.models.functions import ExtractMonth
 from django.http import HttpResponseRedirect
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 from django.views.generic.dates import YearArchiveView
-from plotly.offline import plot
 
 from bookkeeping import forms, models
 
@@ -36,16 +35,6 @@ def upload_receipt_file(file: UploadedFile, entry: models.BookEntry) -> models.R
     return receipt_entry
 
 
-class NoConfirmDeleteView(DeleteView):
-    """This view skips the confirmation and just deletes the selected entry"""
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        success_url = self.get_success_url()
-        self.object.delete()
-        return HttpResponseRedirect(success_url)
-
-
 class ReturnUrlMixin:
     """
     This Mixin uses the returnUrl parameter as a success URL and falls back
@@ -56,6 +45,16 @@ class ReturnUrlMixin:
         if "returnUrl" in self.request.GET:
             return self.request.GET["returnUrl"]
         return super().get_success_url()
+
+
+class NoConfirmDeleteView(ReturnUrlMixin, DeleteView):
+    """This view skips the confirmation and just deletes the selected entry"""
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = super().get_success_url()
+        self.object.delete()
+        return HttpResponseRedirect(success_url)
 
 
 class BookView(LoginRequiredMixin, ListView):
@@ -170,7 +169,7 @@ class GenericEntryUpdateView(LoginRequiredMixin, ReturnUrlMixin, UpdateView):
         return response
 
 
-class BookEntryDeleteView(LoginRequiredMixin, ReturnUrlMixin, NoConfirmDeleteView):
+class BookEntryDeleteView(LoginRequiredMixin, NoConfirmDeleteView):
     model = models.BookEntry
     success_url = reverse_lazy("entry-list")
 
