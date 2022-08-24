@@ -128,12 +128,12 @@ function addUrlParameter(name, value) {
     <div class="action-menu">
         <div class="floating-action py-1">
             <div class="badge bg-dark">Dienstreise</div>
-            {% url 'add-entry' as add_entry_url %}
+            {% url 'entry-add' as add_entry_url %}
             <a href="{{ add_entry_url | to_return_url:request }}" class="btn btn-lg btn-floating btn-secondary rounded-circle"><i class="bi bi-car-front-fill"></i></a>
         </div>
         <div class="floating-action py-1">
             <div class="badge bg-dark">Einnahme / Ausgabe</div>
-            {% url 'add-businesstrip' as add_businesstrip_url %}
+            {% url 'businesstrip-add' as add_businesstrip_url %}
             <a href="{{ add_businesstrip_url | to_return_url:request }}" class="btn btn-lg btn-floating btn-success rounded-circle"><i class="bi bi-cash"></i></a>
         </div>
     </div>
