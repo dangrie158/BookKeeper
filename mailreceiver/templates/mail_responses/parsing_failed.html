@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>BookKeeper | Parsen fehlgeschlagen</title>
+        <link href="{{ BASE_URL }}{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{{ BASE_URL }}{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+        <link href="{{ BASE_URL }}{% static 'css/offcanvas.css' %}" rel="stylesheet">
+    </head>
+
+    <body>
+        <div class="container-md">
+            <div class="text-center mb-4">
+                <img class="mb-4" src="{% static 'assets/favicon/192x192.png' %}" alt="BookKeeper" width="72" height="72">
+                <h1 class="h4 mb-3 font-weight-normal alert alert-warning">Eintrag konnte nicht hinzugefügt werden</h1>
+            </div>
+            <div>
+                <p class="lead">Hallo {{ user.display_name }},</p>
+                <p>Der Eintrag konnte nicht hinzugefügt werden. Folgende Fehler sind aufgetreten:</p>
+                <ul>
+                    {% for error in extracted_information.parsing_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                <dl class="row mx-auto" style="max-width: 600px">
+                    <dt class="col-sm-3">Betrag</dt>
+                    <dd class="col-sm-9 text-truncate text-end">{{ extracted_information.invoice_amount }}€</dd>
+                    <dd class="col-sm-12 text-truncate text-end">{% if extracted_information.entry_type == "IN" %}Einnahme{% else %}Ausgabe{% endif %}</dd>
+
+                    <dt class="col-sm-3">Shop</dt>
+                    <dd class="col-sm-9 text-truncate text-end">{{ extracted_information.sender_name }}</dd>
+
+                    <dt class="col-sm-3">Buchungsdatum</dt>
+                    <dd class="col-sm-9 text-truncate text-end">{{ extracted_information.booking_date }}</dd>
+
+                    <dt class="col-sm-3">Kommentar</dt>
+                    <dd class="col-sm-9 text-truncate text-end">{{ extracted_information.subject }}</dd>
+
+
+                    <dt class="col-sm-3">Anhänge</dt>
+                    <dd class="col-sm-9 text-truncate">
+                        <ul>
+                            {% for attachment in extracted_information.attachments %}
+                                <li>{{ attachment.file_name }}</li>
+                            {% empty %}
+                            <i>keine</i>
+                            {% endfor %}
+                        </ul>
+                    </dd>
+                </dl>
+                <p>Sie können den Eintrag <a href="{{ BASE_URL }}{% url 'entry-add' %}">manuell erstellen</a>.</p>
+            </div>
+        </div>
+    </body>
+</html>

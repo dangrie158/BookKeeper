@@ -1,0 +1,18 @@
+Hallo {{ user.display_name }},
+
+Der Eintrag wurde mit folgenden Angaben hinzugefügt:
+
+    Betrag: {{ entry.amount }}€
+    {% if extracted_information.entry_type == "IN" %}Einnahme{% else %}Ausgabe{% endif %}
+    Shop: {{ entry.shop }}
+    Buchungsdatum: {{ entry.booking_date }}
+    Kommentar: {{ entry.comment }}
+
+    Anhänge:
+    {% for receipt in entry.receipt_set.all %}
+        {{ receipt.file_name }}: {{ BASE_URL }}{{MEDIA_URL}}{{receipt.file}}
+    {% empty %}
+        - keine -
+    {% endfor %}
+
+Sie können den Eintrag unter {{ BASE_URL }}{% url 'entry-update' entry.id %} direkt bearbeiten

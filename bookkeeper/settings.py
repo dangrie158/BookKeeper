@@ -40,6 +40,7 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 
 
 ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]"]
+BASE_URL = os.environ["BASE_URL"]
 if "UPSTREAM_HOST" in os.environ:
     HOSTNAME = os.environ["UPSTREAM_HOST"]
     ALLOWED_HOSTS.append(HOSTNAME)
@@ -54,8 +55,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_extensions",
     "widget_tweaks",
     "bookkeeping",
+    "mailreceiver",
 ]
 
 MIDDLEWARE = [
@@ -132,6 +135,16 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTH_USER_MODEL = "bookkeeping.User"
 
 
+# EMail & SMTP
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = os.environ["EMAIL_HOST"]
+EMAIL_HOST_PASSWORD = os.environ["EMAIL_HOST_PASSWORD"]
+EMAIL_HOST_USER = os.environ["EMAIL_HOST_USER"]
+EMAIL_PORT = os.environ["EMAIL_PORT"]
+EMAIL_SUBJECT_PREFIX = "BookKeeper"
+EMAIL_USE_SSL = bool(os.environ["EMAIL_USE_SSL"])
+
+# Logging
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

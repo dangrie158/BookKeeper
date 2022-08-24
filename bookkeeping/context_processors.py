@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from bookkeeping.models import BookEntry
 
 

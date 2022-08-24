@@ -1,0 +1,21 @@
+Hallo {{ user.display_name }},
+
+Der Eintrag konnte nicht hinzugefügt werden. Folgende Fehler sind aufgetreten:
+{% for error in extracted_information.parsing_errors %}
+    - {{ error }}
+{% endfor %}
+
+    Betrag: {{ extracted_information.invoice_amount }}€
+    {% if extracted_information.entry_type == "IN" %}Einnahme{% else %}Ausgabe{% endif %}
+    Shop: {{ extracted_information.sender_name }}
+    Buchungsdatum: {{ extracted_information.booking_date }}
+    Kommentar: {{ extracted_information.subject }}
+
+    Anhänge:
+    {% for attachment in extracted_information.attachments %}
+        {{ attachment.file_name }}
+    {% empty %}
+        - keine -
+    {% endfor %}
+
+Sie können den Eintrag unter {{ BASE_URL }}{% url 'entry-add' %} manuell erstellen.

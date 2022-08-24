@@ -13,11 +13,21 @@ from django.utils.functional import cached_property
 
 
 class User(AbstractUser):
-    pass
+    # default email ob AbstractUser is non-unique and blankable
+    email = models.EmailField(unique=True, blank=False)
 
     class Meta:
         verbose_name = "Benutzer"
         verbose_name_plural = "Benutzer"
+
+    @cached_property
+    def display_name(self):
+        if self.first_name and self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        elif self.first_name:
+            return self.first_name
+
+        return self.username
 
 
 class BookEntry(models.Model):

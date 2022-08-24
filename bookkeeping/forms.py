@@ -14,7 +14,7 @@ class EntryForm(forms.ModelForm):
         label="Buchungsdatum",
         initial=lambda: date.today().strftime("%Y-%m-%d"),
     )
-    type = forms.ChoiceField(
+    type: forms.Field = forms.ChoiceField(
         choices=models.BookEntry.EntryType.choices,
         widget=forms.RadioSelect,
         label="Typ",

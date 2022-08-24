@@ -1,5 +1,6 @@
 from contextlib import suppress
 from pathlib import Path
+from urllib import request
 from urllib.parse import urlparse
 
 import plotly.graph_objects as go
@@ -16,6 +17,7 @@ from django.http.response import HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 from django.views.generic.dates import YearArchiveView
+from django.views.generic.edit import FormMixin
 
 from bookkeeping import forms, models
 
@@ -35,11 +37,13 @@ def upload_receipt_file(file: UploadedFile, entry: models.BookEntry) -> models.R
     return receipt_entry
 
 
-class ReturnUrlMixin:
+class ReturnUrlMixin(FormMixin):
     """
     This Mixin uses the returnUrl parameter as a success URL and falls back
     to the default behaviour if not defined
     """
+
+    request: HttpRequest
 
     def get_success_url(self) -> str:
         if "returnUrl" in self.request.GET:

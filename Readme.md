@@ -7,6 +7,8 @@ A simple Django App to keep a ledger of the income and expenses of the side busi
 ## Features:
 - Input Expenses / Income
 - Attach Photos / Documents as Receipts
+- Automatically add entries from an EMail
+    - Just forward your invoices to the tool and have it create entries automatically
 - Write off expenses over multiple years
 - Get a yearly report for your taxes
 - Search all your expenses by date and text

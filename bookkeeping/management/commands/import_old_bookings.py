@@ -2,7 +2,7 @@ import csv
 from datetime import datetime
 from pathlib import Path
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from bookkeeping.models import BookEntry, User
 

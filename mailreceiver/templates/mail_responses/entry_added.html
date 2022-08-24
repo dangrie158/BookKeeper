@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>BookKeeper | Parsen fehlgeschlagen</title>
+        <link href="{{ BASE_URL }}{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{{ BASE_URL }}{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+        <link href="{{ BASE_URL }}{% static 'css/offcanvas.css' %}" rel="stylesheet">
+    </head>
+
+    <body>
+        <div class="container-md">
+            <div class="text-center mb-4">
+                <img class="mb-4" src="{{ BASE_URL }}{% static 'assets/favicon/192x192.png' %}" alt="BookKeeper" width="72" height="72">
+                <h1 class="h4 mb-3 font-weight-normal alert alert-success">Eintrag hinzugefügt</h1>
+            </div>
+            <div>
+                <p class="lead">Hallo {{ user.display_name }},</p>
+                <p>Der Eintrag wurde mit folgenden Angaben hinzugefügt:</p>
+                <dl class="row mx-auto" style="max-width: 600px">
+                    <dt class="col-sm-3">Betrag</dt>
+                    <dd class="col-sm-9 text-truncate text-end">{{ entry.amount }}€</dd>
+                    <dd class="col-sm-12 text-truncate text-end">{% if extracted_information.entry_type == "IN" %}Einnahme{% else %}Ausgabe{% endif %}</dd>
+
+                    <dt class="col-sm-3">Shop</dt>
+                    <dd class="col-sm-9 text-truncate text-end">{{ entry.shop }}</dd>
+
+                    <dt class="col-sm-3">Buchungsdatum</dt>
+                    <dd class="col-sm-9 text-truncate text-end">{{ entry.booking_date }}</dd>
+
+
+                    <dt class="col-sm-3">Kommentar</dt>
+                    <dd class="col-sm-9 text-truncate text-end">{{ entry.comment }}</dd>
+
+                    <dt class="col-sm-3">Anhänge</dt>
+                    <dd class="col-sm-9 text-truncate">
+                        <ul>
+                            {% for receipt in entry.receipt_set.all %}
+                                <li><a href="{{ BASE_URL }}{{MEDIA_URL}}{{receipt.file}}">{{ receipt.file_name }}</a></li>
+                            {% empty %}
+                            <i>keine</i>
+                            {% endfor %}
+                        </ul>
+                    </dd>
+                </dl>
+                <p>Sie können den Eintrag <a href="{{ BASE_URL }}{% url 'entry-update' entry.id %}">direkt bearbeiten</a>.</p>
+            </div>
+        </div>
+    </body>
+
+</html>
