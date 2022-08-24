@@ -1,22 +1,42 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block navitems %}
-<ul class="navbar-nav me-auto mb-2 mb-md-0">
-    <li><a href="/" class="nav-link px-2">Übersicht</a></li>
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="yearlyDropdown" data-bs-toggle="dropdown"
-            aria-expanded="false">Jahresübersich</a>
-        <ul class="dropdown-menu" aria-labelledby="yearlyDropdown">
-            {% for year in years_with_entries %}
-            <li><a class="dropdown-item" href="/summary/year/{{ year }}/">{{ year }}</a></li>
-            {% endfor %}
-        </ul>
-    </li>
-</ul>
-<form class="d-flex" action="{% url 'logout' %}">
-    <button class="btn btn-outline-dark me-2">Logout</a>
-</form>
+{% block navbar %}
+    {% if user.is_authenticated %}
+    <div class="container">
+        <nav class="navbar navbar-expand-lg fixed-top border-bottom bg-white d-print-none" aria-label="Main navigation">
+            <div class="container-fluid" style="min-height:32px">
+                {% block brand_section %}
+                <a href="/" class="navbar-brand">
+                    <img class="my-2" src="{% static 'assets/favicon/72x72.png' %}" alt="BookKeeper" width="32" height="32">
+                </a>
+                {% endblock %}
+                <button class="navbar-toggler p-0 border-0" type="button" id="navbarSideCollapse"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse offcanvas-collapse">
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                        <li><a href="/" class="nav-link px-2">Übersicht</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="yearlyDropdown" data-bs-toggle="dropdown"
+                                aria-expanded="false">Jahresübersich</a>
+                            <ul class="dropdown-menu" aria-labelledby="yearlyDropdown">
+                                {% for year in years_with_entries %}
+                                <li><a class="dropdown-item" href="/summary/year/{{ year }}/">{{ year }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    </ul>
+                    <form class="d-flex" action="{% url 'logout' %}">
+                        <button class="btn btn-outline-dark me-2">Logout</a>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </div>
+    {% endif %}
 {% endblock %}
 
 {% block extra_scripts %}
