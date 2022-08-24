@@ -22,6 +22,10 @@ class DataExtractionError(Exception):
     pass
 
 
+def get_from_addr(mail_obj: email.message.Message) -> SenderAddress:
+    return SenderAddress(*email.utils.parseaddr(mail_obj["From"]))
+
+
 def extract_invoice_amount_candidates(text_content: str) -> list[float]:
     currency_affix = r"\s*(?:€|EUR)\s*"
     # forced decimal is a number that stands on its own (has a whitespace before and after)
@@ -68,7 +72,7 @@ def extract_email_senders(email_body: str) -> list[SenderAddress]:
     for match in re.finditer(sender_regex, email_body, re.MULTILINE):
         name_str = match.group("realname").strip()
         address_str = match.group("address").strip()
-        address = SenderAddress(address_str, name_str)
+        address = SenderAddress(name_str, address_str)
         all_found_addresses.append(address)
 
     return all_found_addresses

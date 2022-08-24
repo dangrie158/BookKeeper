@@ -13,8 +13,8 @@ class Attachment(NamedTuple):
 
 
 class SenderAddress(NamedTuple):
-    address: str
     realname: str
+    address: str
 
 
 class ParsedMail(NamedTuple):

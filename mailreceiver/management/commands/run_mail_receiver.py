@@ -7,7 +7,7 @@ from django.core.files import File
 from django.core.management.base import BaseCommand
 
 from bookkeeping.models import BookEntry, Receipt, User, _receipt_path_for_entry
-from mailreceiver.mail_parsing import extract_information
+from mailreceiver.mail_parsing import extract_information, get_from_addr
 from mailreceiver.mail_responses import (
     send_entry_added_response,
     send_parse_failed_response,
@@ -52,6 +52,16 @@ class Command(BaseCommand):
             return "538 Need valid DKIK Signature"
         except Exception as e:
             self.stdout.write(self.style.ERROR(e))
+
+        # make sure the from user matches the envelope, since we can only verify the From header
+        # using DKIM but use the envelope to find the user up until now
+        try:
+            from_addr = get_from_addr(extracted_info.mail_obj)
+            from_user = await User.objects.aget(email=from_addr.address)
+        except User.DoesNotExist:
+            from_user = None
+        if from_user != user:
+            return "535 header From did not match sender address"
 
         if len(extracted_info.parsing_errors) > 0:
             self.stdout.write(self.style.WARNING(f"encountered errors while parsing mail from {user.username}:"))
