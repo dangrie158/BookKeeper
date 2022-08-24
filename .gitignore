@@ -160,7 +160,7 @@ cython_debug/
 #.idea/
 
 # don't track the production env settings
-.env
+.env-dev-secrets
 
 # ignore the production data directory
 app_data/**

@@ -26,6 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = bool(os.environ.get("DEBUG", False))
 if DEBUG:
     load_dotenv(BASE_DIR / ".env-dev", override=True)
+    load_dotenv(BASE_DIR / ".env-dev-secrets", override=True)
 else:
     load_dotenv(BASE_DIR / ".env")
 
@@ -114,7 +115,6 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
