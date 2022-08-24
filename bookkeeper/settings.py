@@ -55,11 +55,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django_extensions",
     "widget_tweaks",
     "bookkeeping",
     "mailreceiver",
 ]
+if DEBUG:
+    INSTALLED_APPS += [
+        "django_extensions",
+    ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
