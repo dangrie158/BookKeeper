@@ -8,7 +8,7 @@ from django.template.loader import render_to_string
 from bookkeeping.models import BookEntry, User
 from mailreceiver.models import ParsedMail
 
-DEFAULT_FROM_EMAIL = f"Book Keeper <mailreader@{settings.HOSTNAME}>"
+DEFAULT_FROM_EMAIL = f"BookKeeper <mailreader@{settings.HOSTNAME}>"
 
 
 def _create_message(

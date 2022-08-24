@@ -1,8 +1,5 @@
 version: "3.9"
 services:
-  mail:
-    image: bytemark/smtp
-    restart: always
 
   nginx:
     build: ./nginx/
@@ -15,14 +12,9 @@ services:
       - "8888:80"
     depends_on:
       - django
-    environment:
-      - EMAIL_HOST=mail
-      - EMAIL_HOST_PASSWORD=
-      - EMAIL_HOST_USER=
-      - EMAIL_PORT=25
-      - EMAIL_USE_SSL=1
 
   django:
+    &django-container
     build:
       context: ../
       dockerfile: ./deploy/web/Dockerfile
@@ -32,6 +24,14 @@ services:
       - ../${APP_DATA_STORAGE}/db:${APP_DATA_LOCATION}/db/
       - gunicorn_run:/run/gunicorn/
       - web_static:/var/www/bookkeeper/static
+
+  mailreceiver:
+    <<: *django-container
+    command: poetry run python manage.py run_mail_receiver --host=0.0.0.0 --port=25
+    environment:
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "2500:25"
 
 volumes:
   gunicorn_run:

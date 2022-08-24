@@ -1,6 +1,6 @@
 FROM python:3.10-alpine
 
-RUN apk add python3-dev build-base linux-headers pcre-dev libffi-dev && \
+RUN apk add python3-dev build-base linux-headers pcre-dev libffi-dev git && \
     pip install poetry
 
 RUN mkdir /bookkeeper
