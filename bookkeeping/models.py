@@ -51,6 +51,10 @@ class BookEntry(models.Model):
     def booking_month(self):
         return date(year=self.booking_date.year, month=self.booking_date.month, day=1)
 
+    @property
+    def is_businesstrip(self):
+        return hasattr(self, "businesstrip")
+
     def __str__(self):
         return f"{self.get_type_display()} über {self.amount}{self.currency} von {self.user}"
 

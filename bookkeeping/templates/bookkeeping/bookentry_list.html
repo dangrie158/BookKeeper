@@ -58,6 +58,7 @@ function addUrlParameter(name, value) {
 <table class="table">
     <thead>
         <tr >
+            <th></th>
             <th>Datum</th>
             <th>Shop</th>
             <th class="text-end">Betrag</th>
@@ -66,7 +67,7 @@ function addUrlParameter(name, value) {
     {% regroup object_list by booking_month as month_objects %}
     {% for month in month_objects %}
         <tr class="table-dark">
-            <th colspan="3">
+            <th colspan="4">
                 <div  class="hstack gap-4 text-end">
                     <p class="mb-0">{{ month.grouper | date:'F Y' }}</p>
                     <div class="vstack month-summary">
@@ -79,6 +80,7 @@ function addUrlParameter(name, value) {
         {% for entry in month.list %}
         {% url 'entry-update' entry.id as entry_update_url %}
         <tr role="button" {% if entry.is_booked_in_future %}class="disabled"{% endif %} onclick="window.location='{{ entry_update_url | to_return_url:request }}'">
+            <td><i class="bi {% if entry.is_businesstrip %}bi-car-front{% else %}bi-cash{% endif %}"></i></td>
             <td>{{ entry.booking_date | date:'d. M' }}</td>
             <td class="text-truncate">{{ entry.shop | truncatechars:20 }}</td>
             {% if entry.type == 'EX' %}
@@ -128,13 +130,13 @@ function addUrlParameter(name, value) {
     <div class="action-menu">
         <div class="floating-action py-1">
             <div class="badge bg-dark">Dienstreise</div>
-            {% url 'entry-add' as add_entry_url %}
-            <a href="{{ add_entry_url | to_return_url:request }}" class="btn btn-lg btn-floating btn-secondary rounded-circle"><i class="bi bi-car-front-fill"></i></a>
+            {% url 'businesstrip-add' as add_businesstrip_url %}
+            <a href="{{ add_businesstrip_url | to_return_url:request }}" class="btn btn-lg btn-floating btn-secondary rounded-circle"><i class="bi bi-car-front-fill"></i></a>
         </div>
         <div class="floating-action py-1">
             <div class="badge bg-dark">Einnahme / Ausgabe</div>
-            {% url 'businesstrip-add' as add_businesstrip_url %}
-            <a href="{{ add_businesstrip_url | to_return_url:request }}" class="btn btn-lg btn-floating btn-success rounded-circle"><i class="bi bi-cash"></i></a>
+            {% url 'entry-add' as add_entry_url %}
+            <a href="{{ add_entry_url | to_return_url:request }}" class="btn btn-lg btn-floating btn-success rounded-circle"><i class="bi bi-cash"></i></a>
         </div>
     </div>
     <div class="d-block action-button py-1">
