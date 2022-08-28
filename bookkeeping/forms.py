@@ -43,21 +43,9 @@ class BusinessTripForm(EntryForm):
     type = forms.CharField(widget=forms.HiddenInput, initial="EX")
     shop = forms.CharField(max_length=100, label="Ziel")
 
-    def get_initial_for_field(self, field, field_name):
-        if field_name == "distance":
-            return self.instance.businesstrip.distance if hasattr(self.instance, "businesstrip") else None
-        return super().get_initial_for_field(field, field_name)
-
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        instance.user = self.user
-        if hasattr(instance, "businesstrip"):
-            instance.businesstrip.distance = self.cleaned_data["distance"]
-            instance.businesstrip.save()
-        else:
-            models.BusinessTrip.objects.create(distance=self.cleaned_data["distance"], book_entry=instance)
-
-        return super().save(commit)
+    class Meta:
+        model = models.BusinessTrip
+        fields = ["amount", "distance", "shop", "booking_date", "type", "comment"]
 
 
 class SplitEntryForm(forms.ModelForm):

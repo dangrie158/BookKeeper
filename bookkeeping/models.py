@@ -10,6 +10,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.functional import cached_property
+from polymorphic.models import PolymorphicModel
 
 
 class User(AbstractUser):
@@ -30,7 +31,7 @@ class User(AbstractUser):
         return self.username
 
 
-class BookEntry(models.Model):
+class BookEntry(PolymorphicModel):
     class EntryType(models.TextChoices):
         EXPENSE = ("EX", "Ausgabe")
         INCOME = ("IN", "Einnahme")
@@ -53,7 +54,7 @@ class BookEntry(models.Model):
 
     @property
     def is_businesstrip(self):
-        return hasattr(self, "businesstrip")
+        return False
 
     def __str__(self):
         return f"{self.get_type_display()} über {self.amount}{self.currency} von {self.user}"
@@ -122,8 +123,7 @@ class TripFlatRate(models.Model):
         return f"""Pauschale seit dem {self.valid_since.strftime("%d.%m.%Y")}: {self.rate}"""
 
 
-class BusinessTrip(models.Model):
-    book_entry = models.OneToOneField(BookEntry, null=False, on_delete=models.CASCADE)
+class BusinessTrip(BookEntry):
     distance = models.DecimalField(
         max_digits=8,
         decimal_places=2,
@@ -136,17 +136,18 @@ class BusinessTrip(models.Model):
         verbose_name_plural = "Geschäftsreisen"
 
     def __str__(self):
-        return f"""Geschäftsreise am {self.book_entry.booking_date.strftime("%d.%m.%Y")} über {self.distance:3.2f}km"""
+        return f"""Geschäftsreise am {self.booking_date.strftime("%d.%m.%Y")} über {self.distance:3.2f}km"""
 
     def save(self, *args, **kwargs):
-        self.book_entry.amount = self.flatrate.rate * self.distance
-        self.book_entry.type = BookEntry.EntryType.EXPENSE
-        self.book_entry.save()
+        self.amount = self.flatrate.rate * self.distance
+        self.type = BookEntry.EntryType.EXPENSE
         super().save(*args, **kwargs)
+
+    @property
+    def is_businesstrip(self):
+        return True
 
     @cached_property
     def flatrate(self):
         # the active rate is the newest rate that was valid then the trip was booked
-        return (
-            TripFlatRate.objects.filter(valid_since__lte=self.book_entry.booking_date).order_by("-valid_since").first()
-        )
+        return TripFlatRate.objects.filter(valid_since__lte=self.booking_date).order_by("-valid_since").first()

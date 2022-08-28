@@ -1,6 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth import models as auth_models
 from django.contrib.auth.admin import UserAdmin
+from polymorphic.admin import (
+    PolymorphicChildModelAdmin,
+    PolymorphicChildModelFilter,
+    PolymorphicParentModelAdmin,
+)
 
 from bookkeeping.models import BookEntry, BusinessTrip, Receipt, TripFlatRate, User
 
@@ -11,21 +16,19 @@ class ReceiptInline(admin.TabularInline):
     model = Receipt
 
 
-class BusinessTripAdmin(admin.TabularInline):
-    model = BusinessTrip
+@admin.register(BusinessTrip)
+class BusinessTripAdmin(PolymorphicChildModelAdmin):
+    base_model = BusinessTrip
 
 
-class BookEntryAdmin(admin.ModelAdmin):
-    inlines = [
-        BusinessTripAdmin,
-        ReceiptInline,
-    ]
+@admin.register(BookEntry)
+class BookEntryAdmin(PolymorphicParentModelAdmin):
+    base_model = BookEntry
+    child_models = (BusinessTrip,)
+    inlines = (ReceiptInline,)
+    list_filter = (PolymorphicChildModelFilter,)
 
 
+@admin.register(TripFlatRate)
 class TripFlatRateAdmin(admin.ModelAdmin):
     fields = ("rate", "valid_since")
-
-
-admin.site.register(User, UserAdmin)
-admin.site.register(BookEntry, BookEntryAdmin)
-admin.site.register(TripFlatRate, TripFlatRateAdmin)
