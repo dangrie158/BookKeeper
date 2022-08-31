@@ -129,14 +129,14 @@ class GenericEntryUpdateView(LoginRequiredMixin, ReturnUrlMixin, UpdateView):
 
     def get_form_class(self):
         entry = self.get_object()
-        if hasattr(entry, "businesstrip"):
+        if isinstance(entry, models.BusinessTrip):
             return forms.BusinessTripForm
         else:
             return forms.EntryForm
 
     def get_template_names(self):
         entry = self.get_object()
-        if hasattr(entry, "businesstrip"):
+        if isinstance(entry, models.BusinessTrip):
             return ["bookkeeping/businesstrip_form.html"]
         else:
             return ["bookkeeping/bookentry_form.html"]
