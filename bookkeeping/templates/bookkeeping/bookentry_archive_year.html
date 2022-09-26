@@ -95,4 +95,23 @@
         </tr>
     </tfoot>
 </table>
+
+<h2 class="mt-5">Ausgaben nach Kategorie</h2>
+<table class="table">
+    <thead>
+        <tr class="text-center">
+            <th class="text-start" colspan="2">Kategorie</th>
+            <th class="text-end">Info</th>
+            <th class="text-end">Summe</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><i class="bi bi-car-front"></i></td>
+            <td>Dienstreisen</td>
+            <td class="font-monospace text-end">{{ object_list|filter_category:'is_businesstrip'|property_sum:'distance' }} km</td>
+            <td class="font-monospace text-end">{{ object_list|filter_category:'is_businesstrip'|entry_sum }}€</td>
+        </tr>
+    </tbody>
+</table>
 {% endblock %}
