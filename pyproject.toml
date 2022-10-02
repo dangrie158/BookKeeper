@@ -51,3 +51,7 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = "dkim.*"
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "polymorphic.*"
+ignore_missing_imports = true
