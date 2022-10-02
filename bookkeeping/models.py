@@ -90,8 +90,8 @@ class Receipt(models.Model):
     entry = models.ForeignKey(BookEntry, on_delete=models.CASCADE)
 
     @property
-    def is_pdf(self):
-        return self.file.name.endswith("pdf")
+    def is_image(self):
+        return self.file.name.endswith(("png", "jpeg", "jpg"))
 
     @property
     def file_name(self):

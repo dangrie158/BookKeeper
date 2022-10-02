@@ -117,10 +117,10 @@
                 <div class="card-header">
                     <strong class="card-title">{{ receipt.file_name }}</strong>
                 </div>
-                {% if receipt.is_pdf %}
-                <i class="bi bi-filetype-pdf" style="font-size: 7rem"></i>
-                {% else %}
+                {% if receipt.is_image %}
                 <img src="{{MEDIA_URL}}{{receipt.file}}" alt="Beleg" class="w-100 h-auto">
+                {% else %}
+                <i class="bi bi-file-earmark" style="font-size: 7rem"></i>
                 {% endif %}
                 <div class="card-body d-flex">
                     <div class="btn-group align-items-end" role="group">
