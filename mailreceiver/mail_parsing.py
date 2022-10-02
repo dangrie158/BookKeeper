@@ -10,6 +10,7 @@ from typing import cast
 
 import dkim
 import PyPDF2
+from PyPDF2.errors import PdfReadError
 
 from bookkeeping.models import BookEntry, User
 from mailreceiver.models import Attachment, ParsedMail, SenderAddress
@@ -54,8 +55,11 @@ def extract_text(data: bytes | str, content_type: str) -> str:
     match content_type:
         case "application/pdf":
             assert isinstance(data, bytes)
-            pdf_stream = BytesIO(data)
-            pdf_reader = PyPDF2.PdfReader(pdf_stream)
+            try:
+                pdf_stream = BytesIO(data)
+                pdf_reader = PyPDF2.PdfReader(pdf_stream)
+            except PdfReadError:
+                return ""
             return " ".join(page.extract_text() for page in pdf_reader.pages)
         case "text/plain":
             assert isinstance(data, str)
