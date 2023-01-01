@@ -8,10 +8,18 @@ services:
       - gunicorn_run:/run/gunicorn/
       - web_static:/var/www/bookkeeper/static/:ro
       - ../${APP_DATA_STORAGE}/media:/var/www/bookkeeper/media/:ro
-    ports:
-      - "8888:80"
     depends_on:
       - django
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.bookkeeper.entrypoints=websecure"
+      - "traefik.http.routers.bookkeeper.rule=Host(`bookkeeper.naehcram.de`)"
+      - "traefik.http.routers.bookkeeper.tls.certResolver=letsencrypt"
+      - "traefik.http.routers.bookkeeper.tls=true"
+    external_links:
+      - traefik-reverseproxy
+    networks:
+      - traefik
 
   django:
     &django-container
@@ -30,9 +38,28 @@ services:
     command: poetry run python manage.py run_mail_receiver --host=0.0.0.0 --port=25
     environment:
       - PYTHONUNBUFFERED=1
-    ports:
-      - "2500:25"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.services.bookkeeper-smtp.loadbalancer.server.port=25"
+
+      - "traefik.tcp.routers.bookkeeper-mailreceiver.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.bookkeeper-mailreceiver.service=bookkeeper-smtp"
+      - "traefik.tcp.routers.bookkeeper-mailreceiver.entrypoints=smtp"
+
+      - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.tls=true"
+      - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.service=bookkeeper-smtp"
+      - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.entrypoints=smtp-ssl"
+    external_links:
+      - traefik-reverseproxy
+    networks:
+      - traefik
 
 volumes:
   gunicorn_run:
   web_static:
+
+networks:
+  traefik:
+    name: traefik-reverse-proxy
+    external: true

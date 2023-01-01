@@ -10,6 +10,8 @@ COPY poetry.lock pyproject.toml /bookkeeper/
 RUN poetry install --no-dev --no-interaction
 
 COPY . /bookkeeper/
+EXPOSE 80
+EXPOSE 25
 
 CMD sh -c "poetry run python manage.py collectstatic --noinput && \
     poetry run python manage.py migrate && \

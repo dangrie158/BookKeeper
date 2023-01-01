@@ -21,7 +21,7 @@ function remote_command(){
 }
 
 function remote_docker_compose(){
-    remote_command docker-compose --env-file=.env --file=deploy/docker-compose.yml --project-name=bookkeeper $@
+    remote_command docker compose --env-file=.env --file=deploy/docker-compose.yml --project-name=bookkeeper $@
 }
 
 remote_docker_compose down
