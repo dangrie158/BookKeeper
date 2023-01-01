@@ -47,6 +47,7 @@ services:
       - "traefik.tcp.routers.bookkeeper-mailreceiver.entrypoints=smtp"
 
       - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.tls=true"
+      - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.tls=letsencrypt"
       - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.rule=HostSNI(`*`)"
       - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.service=bookkeeper-smtp"
       - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.entrypoints=smtp-ssl"
