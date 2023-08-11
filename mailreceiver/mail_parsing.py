@@ -65,7 +65,8 @@ def extract_text(data: bytes | str, content_type: str) -> str:
             assert isinstance(data, str)
             return data
         case _:
-            assert isinstance(data, str)
+            if isinstance(data, bytes):
+                data = data.decode("utf-8")
             return data
 
 
