@@ -15,7 +15,6 @@ def add_initial_flatrate(apps, shema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bookkeeping", "0003_alter_bookentry_options"),
     ]

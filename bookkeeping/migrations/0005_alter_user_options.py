@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bookkeeping", "0004_tripflatrate_businesstrip"),
     ]

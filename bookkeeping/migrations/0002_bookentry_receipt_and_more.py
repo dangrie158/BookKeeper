@@ -8,7 +8,6 @@ import bookkeeping.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bookkeeping", "0001_initial"),
     ]

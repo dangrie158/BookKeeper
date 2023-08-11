@@ -20,7 +20,6 @@ def set_ctype_for_polymorphic(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("contenttypes", "0002_remove_content_type_name"),
         ("bookkeeping", "0007_businesstrip_inherits_bookentry"),

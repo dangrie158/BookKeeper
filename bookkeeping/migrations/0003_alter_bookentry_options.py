@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bookkeeping", "0002_bookentry_receipt_and_more"),
     ]

@@ -19,7 +19,6 @@ def unmigrate_old_trips(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bookkeeping", "0006_alter_user_email"),
     ]
