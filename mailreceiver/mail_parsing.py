@@ -127,9 +127,6 @@ def get_booking_type(mail_body: str) -> BookEntry.EntryType:
 def extract_information(contents: bytes, user: User) -> ParsedMail:
     parsing_errors = []
 
-    if not dkim.verify(contents):
-        raise dkim.ValidationError("Ungültige DKIM Signatur.")
-
     mail_obj = cast(email.message.MIMEPart, parser.parsebytes(contents))
 
     subject = get_subject_without_prefixes(mail_obj)
