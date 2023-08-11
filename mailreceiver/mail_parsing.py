@@ -31,7 +31,7 @@ def extract_invoice_amount_candidates(text_content: str) -> list[float]:
     currency_affix = r"\s*(?:€|EUR)\s*"
     # forced decimal is a number that stands on its own (has a whitespace before and after)
     # and MUST contain a decimal separator and 2 decimals
-    forced_decimal = r"\d+[.,]\d{2}"
+    forced_decimal = r"\d+[.,]\d{2}\D"
     amount_regex = "|".join(
         [
             rf"""(?:{currency_affix}({forced_decimal}))""",
