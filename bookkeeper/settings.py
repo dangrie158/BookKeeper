@@ -112,7 +112,7 @@ if not "APP_DATA_LOCATION" in os.environ:
 
 APP_DATA_LOCATION = Path(os.environ["APP_DATA_LOCATION"])
 DB_PATH = APP_DATA_LOCATION / "db/db.sqlite3"
-DB_PATH.parent.mkdir(exist_ok=True)
+DB_PATH.parent.mkdir(exist_ok=True, parents=True)
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -146,7 +146,7 @@ EMAIL_HOST_PASSWORD = os.environ["EMAIL_HOST_PASSWORD"]
 EMAIL_HOST_USER = os.environ["EMAIL_HOST_USER"]
 EMAIL_PORT = os.environ["EMAIL_PORT"]
 EMAIL_SUBJECT_PREFIX = "BookKeeper"
-EMAIL_USE_TLS = bool(os.environ["EMAIL_USE_TLS"])
+EMAIL_USE_TLS = bool(os.environ.get("EMAIL_USE_TLS", True))
 
 # Logging
 LOGGING = {
@@ -171,12 +171,16 @@ USE_I18N = False
 USE_TZ = True
 
 STATIC_URL = "static/"
-STATICFILES_DIRS: list[str | tuple[str, str]] = ["bookkeeper/static"]
+STATICFILES_DIR = Path("bookkeeper/static")
+STATICFILES_DIR.mkdir(exist_ok=True, parents=True)
+STATICFILES_DIRS: list[str | tuple[str, str]] = [str(STATICFILES_DIR)]
+
 STATIC_ROOT = "/var/www/bookkeeper/static/"
 
 if DEBUG:
     MEDIA_URL = "./static/media/"
     MEDIA_ROOT = APP_DATA_LOCATION / "media"
+    MEDIA_ROOT.mkdir(exist_ok=True, parents=True)
     STATICFILES_DIRS += [("media", str(APP_DATA_LOCATION / "media"))]
 else:
     MEDIA_URL = "media/"
