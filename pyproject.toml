@@ -15,7 +15,7 @@ gunicorn = "^20.1.0"
 plotly = "^5.9.0"
 PyPDF2 = "^2.10.3"
 pycryptodome = "^3.15.0"
-aiosmtpd = {git = "https://github.com/aio-libs/aiosmtpd"}
+aiosmtpd = "^1.4.6"
 dkimpy = "^1.0.5"
 django-polymorphic = "^3.1.0"
 
