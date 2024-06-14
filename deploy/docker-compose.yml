@@ -36,9 +36,16 @@ services:
         command: poetry run python manage.py run_mail_receiver --host=0.0.0.0 --port=25
         environment:
             - PYTHONUNBUFFERED=1
-        ports:
-            - "25:25"
-
+        networks:
+            - traefik
+        labels:
+            - "traefik.enable=true"
+            - "traefik.tcp.services.bookkeeper-smtp.loadbalancer.server.port=25"
+            - "traefik.tcp.routers.bookkeeper-mailreceiver.rule=HostSNI(`*`)"
+            - "traefik.tcp.routers.bookkeeper-mailreceiver.service=bookkeeper-smtp"
+            - "traefik.tcp.routers.bookkeeper-mailreceiver.entrypoints=smtp"
+        external_links:
+            - traefik-reverseproxy
 volumes:
     gunicorn_run:
     web_static:
