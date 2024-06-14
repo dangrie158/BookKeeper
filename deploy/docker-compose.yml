@@ -1,66 +1,68 @@
 version: "3.9"
 services:
+    nginx:
+        build: ./nginx/
+        restart: always
+        volumes:
+            - gunicorn_run:/run/gunicorn/
+            - web_static:/var/www/bookkeeper/static/:ro
+            - ../${APP_DATA_STORAGE}/media:/var/www/bookkeeper/media/:ro
+        depends_on:
+            - django
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.bookkeeper.entrypoints=websecure"
+            - "traefik.http.routers.bookkeeper.rule=Host(`bookkeeper.naehcram.de`)"
+            - "traefik.http.routers.bookkeeper.tls.certResolver=letsencrypt"
+            - "traefik.http.routers.bookkeeper.tls=true"
+        external_links:
+            - traefik-reverseproxy
+        networks:
+            - traefik
 
-  nginx:
-    build: ./nginx/
-    restart: always
-    volumes:
-      - gunicorn_run:/run/gunicorn/
-      - web_static:/var/www/bookkeeper/static/:ro
-      - ../${APP_DATA_STORAGE}/media:/var/www/bookkeeper/media/:ro
-    depends_on:
-      - django
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.bookkeeper.entrypoints=websecure"
-      - "traefik.http.routers.bookkeeper.rule=Host(`bookkeeper.naehcram.de`)"
-      - "traefik.http.routers.bookkeeper.tls.certResolver=letsencrypt"
-      - "traefik.http.routers.bookkeeper.tls=true"
-    external_links:
-      - traefik-reverseproxy
-    networks:
-      - traefik
+    django: &django-container
+        build:
+            context: ../
+            dockerfile: ./deploy/web/Dockerfile
+        restart: always
+        volumes:
+            - ../${APP_DATA_STORAGE}/media:/var/www/bookkeeper/media
+            - ../${APP_DATA_STORAGE}/db:${APP_DATA_LOCATION}/db/
+            - gunicorn_run:/run/gunicorn/
+            - web_static:/var/www/bookkeeper/static
 
-  django:
-    &django-container
-    build:
-      context: ../
-      dockerfile: ./deploy/web/Dockerfile
-    restart: always
-    volumes:
-      - ../${APP_DATA_STORAGE}/media:/var/www/bookkeeper/media
-      - ../${APP_DATA_STORAGE}/db:${APP_DATA_LOCATION}/db/
-      - gunicorn_run:/run/gunicorn/
-      - web_static:/var/www/bookkeeper/static
+    mailreceiver:
+        <<: *django-container
+        command: poetry run python manage.py run_mail_receiver --host=0.0.0.0 --port=25
+        environment:
+            - PYTHONUNBUFFERED=1
+        labels:
+            - "traefik.enable=true"
+            - "traefik.tcp.services.bookkeeper-smtp.loadbalancer.server.port=25"
 
-  mailreceiver:
-    <<: *django-container
-    command: poetry run python manage.py run_mail_receiver --host=0.0.0.0 --port=25
-    environment:
-      - PYTHONUNBUFFERED=1
-    labels:
-      - "traefik.enable=true"
-      - "traefik.tcp.services.bookkeeper-smtp.loadbalancer.server.port=25"
+            - "traefik.tcp.routers.bookkeeper-mailreceiver.rule=HostSNI(`*`)"
+            - "traefik.tcp.routers.bookkeeper-mailreceiver.service=bookkeeper-smtp"
+            - "traefik.tcp.routers.bookkeeper-mailreceiver.entrypoints=smtp"
 
-      - "traefik.tcp.routers.bookkeeper-mailreceiver.rule=HostSNI(`*`)"
-      - "traefik.tcp.routers.bookkeeper-mailreceiver.service=bookkeeper-smtp"
-      - "traefik.tcp.routers.bookkeeper-mailreceiver.entrypoints=smtp"
+            - "traefik.tcp.routers.bookkeeper-mailreceiver-alt.rule=HostSNI(`*`)"
+            - "traefik.tcp.routers.bookkeeper-mailreceiver-alt.service=bookkeeper-smtp"
+            - "traefik.tcp.routers.bookkeeper-mailreceiver-alt.entrypoints=smtp-alt"
 
-      - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.tls=true"
-      - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.tls=letsencrypt"
-      - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.rule=HostSNI(`*`)"
-      - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.service=bookkeeper-smtp"
-      - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.entrypoints=smtp-ssl"
-    external_links:
-      - traefik-reverseproxy
-    networks:
-      - traefik
+            - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.tls=true"
+            - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.tls=letsencrypt"
+            - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.rule=HostSNI(`*`)"
+            - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.service=bookkeeper-smtp"
+            - "traefik.tcp.routers.bookkeeper-mailreceiver-ssl.entrypoints=smtp-ssl"
+        external_links:
+            - traefik-reverseproxy
+        networks:
+            - traefik
 
 volumes:
-  gunicorn_run:
-  web_static:
+    gunicorn_run:
+    web_static:
 
 networks:
-  traefik:
-    name: traefik-reverse-proxy
-    external: true
+    traefik:
+        name: traefik-reverse-proxy
+        external: true

@@ -75,7 +75,7 @@ class SplitEntryForm(forms.ModelForm):
             raise ValidationError(
                 f"""Ungültige Summe: {total_sum}{currency}.
                 Ursprünglicher Betrag sind {self.instance.amount}{currency}
-                (Differenz {difference}{currency})"""
+                (Differenz    {difference}{currency})"""
             )
 
         return self.cleaned_data
